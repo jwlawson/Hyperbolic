@@ -34,18 +34,16 @@ h1 {
 }
 
 #canvaswrapper{
-    width: 90%;
+    width: 100%;
     border: 1px solid black;
     overflow: hidden; /* will contain if #first is longer than #second */
 }
 #tilingcanvas {
-    width: 50%;
-    float:left;
-    border: 1px solid red;
+    width: 49%;
+    float: left;
 }
 #focalcanvas {
-	width: 50%;
-    border: 1px solid green;
+	width: 49%;
+	float: right;
     overflow: hidden;
-}
 }

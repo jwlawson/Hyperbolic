@@ -15,7 +15,14 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+
+import java.util.ArrayList;
 
 /**
  * @author John
@@ -23,10 +30,50 @@ import com.google.gwt.user.client.ui.RootPanel;
  */
 public class Tiling implements CanvasHolder {
 
+	private static final String MOUNT_ID = "tilingcanvas";
+	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
+
+	private ArrayList<Line> mLineList;
+
+	private Canvas canvas;
+
+	// canvas size, in px
+	private int height = 400;
+	private int width = 400;
+
+	public Tiling() {
+		mLineList = new ArrayList<Line>();
+
+		canvas = Canvas.createIfSupported();
+		if (canvas == null) {
+			RootPanel.get(MOUNT_ID).add(new Label(upgradeMessage));
+			return;
+		}
+
+		initSize();
+
+	}
+
+	public void initSize() {
+		canvas.setWidth(width + "px");
+		canvas.setHeight(height + "px");
+		canvas.setCoordinateSpaceWidth(width);
+		canvas.setCoordinateSpaceHeight(height);
+	}
+
 	@Override
 	public void doUpdate() {
-		// TODO Auto-generated method stub
+		Context2d context = canvas.getContext2d();
+		context.setFillStyle("#33e5b5");
+		context.beginPath();
+		context.arc(0, 0, 100, 0, 2 * Math.PI);
+		context.closePath();
+		context.fill();
 
+		context.beginPath();
+		context.arc(width, height, 100, 0, 2 * Math.PI);
+		context.closePath();
+		context.fill();
 	}
 
 	@Override
@@ -36,8 +83,15 @@ public class Tiling implements CanvasHolder {
 	}
 
 	@Override
-	public void addToPanel(RootPanel panel) {
-		// TODO Auto-generated method stub
+	public void addToPanel() {
+		RootPanel panel = RootPanel.get(MOUNT_ID);
+		width = panel.getOffsetWidth();
+		height = width;
+
+		initSize();
+		doUpdate();
+
+		panel.add(canvas);
 
 	}
 

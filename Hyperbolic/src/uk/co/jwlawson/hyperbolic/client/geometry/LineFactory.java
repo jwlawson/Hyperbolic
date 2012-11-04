@@ -16,7 +16,7 @@
 package uk.co.jwlawson.hyperbolic.client.geometry;
 
 /**
- * @author John
+ * @author John Lawson
  * 
  */
 public interface LineFactory {

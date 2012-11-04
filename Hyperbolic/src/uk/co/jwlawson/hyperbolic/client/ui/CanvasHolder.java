@@ -15,7 +15,6 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
-import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * @author John
@@ -27,6 +26,6 @@ public interface CanvasHolder {
 
 	public void initHandlers();
 
-	public void addToPanel(RootPanel panel);
+	public void addToPanel();
 
 }
