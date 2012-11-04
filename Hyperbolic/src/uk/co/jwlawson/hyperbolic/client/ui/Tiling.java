@@ -36,6 +36,7 @@ public class Tiling implements CanvasHolder {
 	private ArrayList<Line> mLineList;
 
 	private Canvas canvas;
+	private Context2d context;
 
 	// canvas size, in px
 	private int height = 400;
@@ -52,6 +53,8 @@ public class Tiling implements CanvasHolder {
 
 		initSize();
 
+		context = canvas.getContext2d();
+
 	}
 
 	public void initSize() {
@@ -63,7 +66,7 @@ public class Tiling implements CanvasHolder {
 
 	@Override
 	public void doUpdate() {
-		Context2d context = canvas.getContext2d();
+
 		context.setFillStyle("#33e5b5");
 		context.beginPath();
 		context.arc(0, 0, 100, 0, 2 * Math.PI);
@@ -78,7 +81,6 @@ public class Tiling implements CanvasHolder {
 
 	@Override
 	public void initHandlers() {
-		// TODO Auto-generated method stub
 
 	}
 
