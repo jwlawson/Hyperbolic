@@ -21,19 +21,35 @@ package uk.co.jwlawson.hyperbolic.client.geometry;
  */
 public class Point {
 
-	private final float x;
-	private final float y;
+	private static final double ERROR = Math.pow(10, -3);
 
-	public Point(float x, float y) {
+	private double x;
+	private double y;
+
+	public Point(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public float getX() {
+	public boolean equals(Point p) {
+		boolean result = (p.x - x < ERROR);
+		result &= (p.y - y < ERROR);
+		return result;
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	public double getX() {
 		return x;
 	}
 
-	public float getY() {
+	public double getY() {
 		return y;
 	}
 
