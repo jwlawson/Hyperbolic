@@ -15,11 +15,16 @@
  */
 package uk.co.jwlawson.hyperbolic.client.geometry;
 
+import com.google.gwt.canvas.dom.client.Context2d;
+
+import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 
 /**
  * @author John
  * 
  */
-public abstract class Line {
+public abstract class Line implements Drawable {
 
+	@Override
+	public abstract void draw(Context2d context);
 }

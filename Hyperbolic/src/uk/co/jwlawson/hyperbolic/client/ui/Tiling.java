@@ -17,10 +17,13 @@ package uk.co.jwlawson.hyperbolic.client.ui;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.group.TorusOrbitPoints;
 
 import java.util.ArrayList;
 
@@ -34,6 +37,7 @@ public class Tiling implements CanvasHolder {
 	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
 
 	private ArrayList<Line> mLineList;
+	private ArrayList<EuclPoint> mPointList;
 
 	private Canvas canvas;
 	private Context2d context;
@@ -41,6 +45,7 @@ public class Tiling implements CanvasHolder {
 	// canvas size, in px
 	private int height = 400;
 	private int width = 400;
+	private final CssColor redrawColor = CssColor.make("rgb(255,255,255)");
 
 	public Tiling() {
 		mLineList = new ArrayList<Line>();
@@ -55,6 +60,16 @@ public class Tiling implements CanvasHolder {
 
 		context = canvas.getContext2d();
 
+		initPoints();
+
+	}
+
+	private void initPoints() {
+		mPointList = new ArrayList<EuclPoint>();
+		TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
+		while (orbit.hasNext()) {
+			mPointList.add(orbit.next());
+		}
 	}
 
 	public void initSize() {
@@ -62,21 +77,23 @@ public class Tiling implements CanvasHolder {
 		canvas.setHeight(height + "px");
 		canvas.setCoordinateSpaceWidth(width);
 		canvas.setCoordinateSpaceHeight(height);
+
+		initPoints();
 	}
 
 	@Override
 	public void doUpdate() {
 
-		context.setFillStyle("#33e5b5");
-		context.beginPath();
-		context.arc(0, 0, 100, 0, 2 * Math.PI);
-		context.closePath();
-		context.fill();
+		context.save();
+		context.translate(width / 2, height / 2);
 
-		context.beginPath();
-		context.arc(width, height, 100, 0, 2 * Math.PI);
-		context.closePath();
-		context.fill();
+		context.setFillStyle(redrawColor);
+		context.fillRect(-width, -height, width, height);
+
+		for (EuclPoint point : mPointList) {
+			point.draw(context);
+		}
+		context.restore();
 	}
 
 	@Override

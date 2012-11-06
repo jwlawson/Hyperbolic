@@ -53,7 +53,7 @@ public class EuclPoint extends Point implements Drawable, Measurable {
 
 	@Override
 	public void draw(Context2d context) {
-		context.setFillStyle("#000000");
+		context.setFillStyle("#ff0000");
 		context.beginPath();
 		context.arc(getX(), getY(), 2, 0, 2 * Math.PI);
 		context.closePath();

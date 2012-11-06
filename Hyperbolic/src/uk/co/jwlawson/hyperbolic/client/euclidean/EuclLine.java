@@ -17,16 +17,17 @@ package uk.co.jwlawson.hyperbolic.client.euclidean;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+
+import java.util.logging.Logger;
 
 /**
  * @author John
  * 
  */
-public class EuclLine extends Line implements Drawable {
+public class EuclLine extends Line {
 
 	private double startX, startY;
 	private double endX, endY;
@@ -41,6 +42,7 @@ public class EuclLine extends Line implements Drawable {
 	@Override
 	public void draw(Context2d context) {
 		context.setFillStyle("#000000");
+		context.setLineWidth(1);
 		context.beginPath();
 		context.moveTo(startX, startY);
 		context.lineTo(endX, endY);
@@ -49,6 +51,8 @@ public class EuclLine extends Line implements Drawable {
 	}
 
 	public static class Factory implements LineFactory {
+
+		private static final Logger log = Logger.getLogger("EuclLine.Factory");
 
 		private int width;
 		private int height;
@@ -67,6 +71,9 @@ public class EuclLine extends Line implements Drawable {
 
 			Point half = getHalfWayPoint(p1, p2);
 
+			if (Math.abs(m) < 0.0000001) {
+				return new EuclLine(half.getX(), -height, half.getX(), height);
+			}
 			m = -1 / m;
 			calcCthroughPoint(half);
 

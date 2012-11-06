@@ -32,31 +32,42 @@ import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import uk.co.jwlawson.hyperbolic.client.euclidean.EuclLine;
+import uk.co.jwlawson.hyperbolic.client.euclidean.EuclLine.Factory;
+import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.group.TorusOrbitPoints;
+
+import java.util.ArrayList;
+import java.util.logging.Logger;
+
 /**
  * @author John
  * 
  */
 public class Focal implements CanvasHolder {
 
+	private static final Logger log = Logger.getLogger(Focal.class.getName());
+
 	static final String MOUNT_ID = "focalcanvas";
 
 	static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
 
 	Canvas canvas;
-	Canvas backBuffer;
+
+	private ArrayList<EuclPoint> mPointList;
+	private ArrayList<Line> mLineList;
 
 	// mouse positions relative to canvas
 	int mouseX, mouseY;
-
-	// timer refresh rate, in milliseconds
-	static final int refreshRate = 25;
 
 	// canvas size, in px
 	private int height = 400;
 	private int width = 400;
 
-	final CssColor redrawColor = CssColor.make("rgba(255,255,0,0.6)");
-	Context2d context;
+	private final CssColor redrawColor = CssColor.make("rgb(255,255,255)");
+	private Context2d context;
 
 	public Focal() {
 		canvas = Canvas.createIfSupported();
@@ -70,18 +81,56 @@ public class Focal implements CanvasHolder {
 
 	}
 
+	private void initPoints() {
+		log.fine("Loading points");
+		mPointList = new ArrayList<EuclPoint>();
+		mLineList = new ArrayList<Line>();
+
+		EuclLine.Factory factory = new Factory(width, height);
+		Point origin = new Point(0, 0);
+
+		TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
+		// Treat first entry (0,0) specially, as don't want it in focal decomp.
+		mPointList.add(orbit.next());
+		while (orbit.hasNext()) {
+			EuclPoint next = orbit.next();
+			mPointList.add(next);
+			mLineList.add(factory.getPerpendicularBisector(next, origin));
+		}
+		log.fine("Points loaded");
+	}
+
 	public void initSize() {
 		canvas.setWidth(width + "px");
 		canvas.setHeight(height + "px");
 		canvas.setCoordinateSpaceWidth(width);
 		canvas.setCoordinateSpaceHeight(height);
+
+		initPoints();
 	}
 
 	@Override
 	public void doUpdate() {
+		context.save();
+		context.translate(width / 2, height / 2);
 		// update the back canvas
 		context.setFillStyle(redrawColor);
-		context.fillRect(0, 0, width, height);
+		context.fillRect(-width, -height, width, height);
+
+		context.setFillStyle("#333333");
+		context.beginPath();
+		context.arc(0, 0, 5, 0, 2 * Math.PI);
+		context.closePath();
+		context.fill();
+
+		for (EuclPoint point : mPointList) {
+			point.draw(context);
+		}
+
+		for (Line line : mLineList) {
+			line.draw(context);
+		}
+		context.restore();
 	}
 
 	@Override
