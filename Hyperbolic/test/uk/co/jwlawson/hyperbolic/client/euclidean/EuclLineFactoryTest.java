@@ -17,7 +17,6 @@ package uk.co.jwlawson.hyperbolic.client.euclidean;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -89,8 +88,46 @@ public class EuclLineFactoryTest {
 	 * .
 	 */
 	@Test
-	public void testGetGeodesicThrough() {
-		fail("Not yet implemented");
+	public void testVerticalGeodesic() {
+		EuclPoint p1 = new EuclPoint(1, 1);
+		EuclPoint p2 = new EuclPoint(1, 5);
+		Line line = factory.getGeodesicThrough(p1, p2);
+
+		assertTrue(line.contains(new Point(1, 3)));
+		assertTrue(line.contains(new Point(1, 10)));
+		assertFalse(line.contains(new Point(0.999, 0)));
+	}
+
+	@Test
+	public void testHorizontalGeodesic() {
+		EuclPoint p1 = new EuclPoint(5, 5);
+		EuclPoint p2 = new EuclPoint(20, 5);
+		Line line = factory.getGeodesicThrough(p1, p2);
+
+		assertTrue(line.contains(p1));
+		assertTrue(line.contains(p2));
+		assertTrue(line.contains(new Point(-10, 5)));
+
+	}
+
+	@Test
+	public void testGradGeodesic() {
+		EuclPoint p1 = new EuclPoint(1, 1);
+		EuclPoint p2 = new EuclPoint(5, 9);
+		Line line = factory.getGeodesicThrough(p1, p2);
+
+		assertTrue(line.contains(new Point(3, 5)));
+	}
+
+	@Test
+	public void testGeodesicEndPoints() {
+		EuclPoint p1 = new EuclPoint(-8.27, 7.1290);
+		EuclPoint p2 = new EuclPoint(19.8632, 1.1111111111111);
+		Line line = factory.getGeodesicThrough(p1, p2);
+
+		assertTrue(line.contains(p1));
+		assertTrue(line.contains(p2));
+
 	}
 
 }
