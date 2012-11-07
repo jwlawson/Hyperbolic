@@ -21,8 +21,6 @@ import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
-import java.util.logging.Logger;
-
 /**
  * @author John
  * 
@@ -32,7 +30,7 @@ public class EuclLine extends Line {
 	private double startX, startY;
 	private double endX, endY;
 
-	private EuclLine(double startx, double starty, double endx, double endy) {
+	protected EuclLine(double startx, double starty, double endx, double endy) {
 		this.startX = startx;
 		this.startY = starty;
 		this.endX = endx;
@@ -50,9 +48,23 @@ public class EuclLine extends Line {
 		context.stroke();
 	}
 
-	public static class Factory implements LineFactory {
+	@Override
+	public boolean contains(Point p) {
+		if (doubleEquals(startX, endX)) {
+			// Vertical
+			return (doubleEquals(startX, p.getX()));
+		}
+		double m = (startY - endY) / (startX - endX);
+		double c = (startY - m * startX);
 
-		private static final Logger log = Logger.getLogger("EuclLine.Factory");
+		return (doubleEquals(p.getY(), m * p.getX() + c));
+	}
+
+	private boolean doubleEquals(double a, double b) {
+		return Math.abs(a - b) < 0.00001;
+	}
+
+	public static class Factory implements LineFactory {
 
 		private int width;
 		private int height;
@@ -71,7 +83,7 @@ public class EuclLine extends Line {
 
 			Point half = getHalfWayPoint(p1, p2);
 
-			if (Math.abs(m) < 0.0000001) {
+			if (doubleEquals(m, 0)) {
 				return new EuclLine(half.getX(), -height, half.getX(), height);
 			}
 			m = -1 / m;
@@ -87,7 +99,7 @@ public class EuclLine extends Line {
 		@Override
 		public Line getGeodesicThrough(Point p1, Point p2) {
 
-			if (p1.getY() - p2.getY() < 0.000001) {
+			if (doubleEquals(p1.getX(), p2.getX())) {
 				// Vertical line, so handle separately
 				return new EuclLine(p1.getX(), -height, p1.getX(), height);
 			}
@@ -107,7 +119,7 @@ public class EuclLine extends Line {
 		}
 
 		private void calcM(Point p1, Point p2) {
-			m = (p1.getX() - p2.getX()) / (p1.getY() - p2.getY());
+			m = (p1.getY() - p2.getY()) / (p1.getX() - p2.getX());
 		}
 
 		private void calcCthroughPoint(Point p1) {
@@ -118,50 +130,62 @@ public class EuclLine extends Line {
 			double x = -width;
 			double y = getY(x);
 
-			if (y <= height && y >= -height) {
+			if (validY(y)) {
 				return new Point(x, y);
 			}
 			x = width;
 			y = getY(x);
-			if (y <= height && y >= -height) {
+			if (validY(y)) {
 				return new Point(x, y);
 			}
 			y = height;
 			x = getX(y);
-			if (x <= width && x >= -width) {
+			if (validX(x)) {
 				return new Point(x, y);
 			}
 			y = -height;
 			x = getX(y);
-			if (x <= width && x >= -width) {
+			if (validX(x)) {
 				return new Point(x, y);
 			}
 			return new Point(0, 0);
+		}
+
+		public boolean validY(double y) {
+			return y <= height && y >= -height;
+		}
+
+		public boolean validX(double x) {
+			return x <= width && x >= -width;
 		}
 
 		private Point getEnd() {
 
 			double y = -height;
 			double x = getX(y);
-			if (x <= width && x >= -width) {
+			if (validX(x)) {
 				return new Point(x, y);
 			}
 			y = height;
 			x = getX(y);
-			if (x <= width && x >= -width) {
+			if (validX(x)) {
 				return new Point(x, y);
 			}
 			x = width;
 			y = getY(x);
-			if (y <= height && y >= -height) {
+			if (validY(y)) {
 				return new Point(x, y);
 			}
 			x = -width;
 			y = getY(x);
-			if (y <= height && y >= -height) {
+			if (validY(y)) {
 				return new Point(x, y);
 			}
 			return new Point(0, 0);
+		}
+
+		private boolean doubleEquals(double a, double b) {
+			return Math.abs(a - b) < 0.00001;
 		}
 
 		private double getX(double y) {
