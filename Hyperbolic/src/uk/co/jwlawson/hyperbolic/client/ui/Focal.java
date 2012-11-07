@@ -90,7 +90,8 @@ public class Focal implements CanvasHolder {
 		Point origin = new Point(0, 0);
 
 		TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		// Treat first entry (0,0) specially, as don't want it in focal decomp.
+		// Treat first entry (0,0) specially, as don't want it in focal
+		// decomp.
 		mPointList.add(orbit.next());
 		while (orbit.hasNext()) {
 			EuclPoint next = orbit.next();
@@ -98,6 +99,7 @@ public class Focal implements CanvasHolder {
 			mLineList.add(factory.getPerpendicularBisector(next, origin));
 		}
 		log.fine("Points loaded");
+
 	}
 
 	public void initSize() {
