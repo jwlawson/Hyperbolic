@@ -111,17 +111,13 @@ public class Focal implements CanvasHolder {
 
 	@Override
 	public void doUpdate() {
-		context.save();
-		context.translate(width / 2, height / 2);
+
 		// update the back canvas
 		context.setFillStyle(redrawColor);
 		context.fillRect(-width, -height, width, height);
 
-		context.setFillStyle("#333333");
-		context.beginPath();
-		context.arc(0, 0, 5, 0, 2 * Math.PI);
-		context.closePath();
-		context.fill();
+		context.save();
+		context.translate(width / 2, height / 2);
 
 		for (EuclPoint point : mPointList) {
 			point.draw(context);
