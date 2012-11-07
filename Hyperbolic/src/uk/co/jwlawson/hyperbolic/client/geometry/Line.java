@@ -27,4 +27,6 @@ public abstract class Line implements Drawable {
 
 	@Override
 	public abstract void draw(Context2d context);
+
+	public abstract boolean contains(Point p);
 }
