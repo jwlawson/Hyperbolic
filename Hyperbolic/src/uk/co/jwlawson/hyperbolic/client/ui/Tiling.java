@@ -21,11 +21,14 @@ import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import uk.co.jwlawson.hyperbolic.client.euclidean.EuclLine;
+import uk.co.jwlawson.hyperbolic.client.euclidean.EuclLine.Factory;
 import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.group.TorusOrbitPoints;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * @author John
@@ -36,6 +39,7 @@ public class Tiling implements CanvasHolder {
 	private static final String MOUNT_ID = "tilingcanvas";
 	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
 
+	private static final Logger log = Logger.getLogger("Tiling");
 	private ArrayList<Line> mLineList;
 	private ArrayList<EuclPoint> mPointList;
 
@@ -70,6 +74,20 @@ public class Tiling implements CanvasHolder {
 		while (orbit.hasNext()) {
 			mPointList.add(orbit.next());
 		}
+
+		mLineList = new ArrayList<Line>();
+		EuclLine.Factory factory = new Factory(width, height);
+		log.info("Iterating over points");
+		for (EuclPoint p1 : mPointList) {
+			for (EuclPoint p2 : mPointList) {
+				if (Math.abs(p1.distance(p2) - 100) < 0.000001) {
+					Line line = factory.getPerpendicularBisector(p1, p2);
+					if (!mLineList.contains(line)) {
+						mLineList.add(line);
+					}
+				}
+			}
+		}
 	}
 
 	public void initSize() {
@@ -84,14 +102,18 @@ public class Tiling implements CanvasHolder {
 	@Override
 	public void doUpdate() {
 
-		context.save();
-		context.translate(width / 2, height / 2);
-
 		context.setFillStyle(redrawColor);
 		context.fillRect(-width, -height, width, height);
 
+		context.save();
+		context.translate(width / 2, height / 2);
+
 		for (EuclPoint point : mPointList) {
 			point.draw(context);
+		}
+
+		for (Line line : mLineList) {
+			line.draw(context);
 		}
 		context.restore();
 	}

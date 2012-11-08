@@ -64,6 +64,17 @@ public class EuclLine extends Line {
 		return Math.abs(a - b) < 0.00001;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof EuclLine) {
+			EuclLine line = (EuclLine) obj;
+			return line.contains(new Point(startX, startY)) && line.contains(new Point(endX, endY));
+
+		} else {
+			return false;
+		}
+	}
+
 	public static class Factory implements LineFactory {
 
 		private int width;
