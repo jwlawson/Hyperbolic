@@ -16,6 +16,8 @@
 package uk.co.jwlawson.hyperbolic.client.hyperbolic;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -28,6 +30,13 @@ import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 public class HypPointTest {
 
 	private static final double ERROR = 0.000001;
+
+	@Test
+	public void testIsValid() {
+		assertFalse(HypPoint.isValid(new Point(1, 1)));
+
+		assertTrue(HypPoint.isValid(new Point(0, 0.5)));
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidBoundaryConstructor() {

@@ -15,22 +15,29 @@
  */
 package uk.co.jwlawson.hyperbolic.client.hyperbolic;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
 /**
  * @author John
- *
+ * 
  */
 public class HypLineTest {
 
 	/**
-	 * Test method for {@link uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLine#contains(uk.co.jwlawson.hyperbolic.client.geometry.Point)}.
+	 * Test method for
+	 * {@link uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLine#contains(uk.co.jwlawson.hyperbolic.client.geometry.Point)}
+	 * .
 	 */
 	@Test
 	public void testContains() {
 		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testEquals() {
+		fail("Not implemented");
 	}
 
 }

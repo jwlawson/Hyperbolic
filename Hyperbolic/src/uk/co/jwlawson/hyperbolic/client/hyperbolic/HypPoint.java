@@ -30,6 +30,11 @@ public class HypPoint extends Point implements Drawable, Measurable {
 
 	private EuclPoint eucl;
 
+	public static boolean isValid(Point p) {
+		EuclPoint eucl = new EuclPoint(p);
+		return eucl.magnitude() < 1;
+	}
+
 	public HypPoint(double x, double y) {
 		super(x, y);
 		eucl = new EuclPoint(this);
@@ -42,7 +47,7 @@ public class HypPoint extends Point implements Drawable, Measurable {
 		checkValid();
 	}
 
-	public void checkValid() {
+	private void checkValid() {
 		if (eucl.magnitude() >= 1) {
 			throw new IllegalArgumentException("Point must lie within the unit disc");
 		}
