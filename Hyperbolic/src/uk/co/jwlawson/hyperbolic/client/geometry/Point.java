@@ -31,6 +31,11 @@ public class Point {
 		this.y = y;
 	}
 
+	public Point(Point p) {
+		this.x = p.getX();
+		this.y = p.getY();
+	}
+
 	public boolean equals(Point p) {
 		boolean result = (p.x - x < ERROR);
 		result &= (p.y - y < ERROR);
