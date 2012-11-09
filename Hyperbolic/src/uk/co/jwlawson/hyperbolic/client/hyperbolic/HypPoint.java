@@ -52,7 +52,6 @@ public class HypPoint extends Point implements Drawable, Measurable {
 	public double distance(Point p) {
 		double x = (getX() - p.getX()) / (1 - (getX() * p.getX()));
 		double y = (getY() - p.getY()) / (1 + (getY() * p.getY()));
-		System.out.println("" + x + ", " + y);
 		HypPoint point = new HypPoint(x, y);
 		return point.magnitude();
 	}
@@ -60,7 +59,6 @@ public class HypPoint extends Point implements Drawable, Measurable {
 	@Override
 	public double magnitude() {
 		double mag = eucl.magnitude();
-		System.out.println("Mag: " + mag);
 		return Math.log((1 + mag) / (1 - mag));
 	}
 
