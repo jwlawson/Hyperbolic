@@ -18,6 +18,8 @@ package uk.co.jwlawson.hyperbolic.client.ui;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Touch;
 import com.google.gwt.event.dom.client.GestureStartEvent;
 import com.google.gwt.event.dom.client.GestureStartHandler;
@@ -75,28 +77,34 @@ public class Focal implements CanvasHolder {
 			RootPanel.get(MOUNT_ID).add(new Label(upgradeMessage));
 			return;
 		}
-
-		initSize();
 		context = canvas.getContext2d();
 
 	}
 
 	private void initPoints() {
-		log.fine("Loading points");
+		log.info("Loading points");
 		mPointList = new ArrayList<EuclPoint>();
 		mLineList = new ArrayList<Line>();
 
-		EuclLine.Factory factory = new Factory(width, height);
-		Point origin = new Point(0, 0);
+		final EuclLine.Factory factory = new Factory(width, height);
+		final Point origin = new Point(0, 0);
 
 		TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
 		// Treat first entry (0,0) specially, as don't want it in focal
 		// decomp.
 		mPointList.add(orbit.next());
 		while (orbit.hasNext()) {
-			EuclPoint next = orbit.next();
-			mPointList.add(next);
-			mLineList.add(factory.getPerpendicularBisector(next, origin));
+			final EuclPoint next = orbit.next();
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+				@Override
+				public void execute() {
+					mPointList.add(next);
+					mLineList.add(factory.getPerpendicularBisector(next, origin));
+					doUpdate();
+				}
+			});
+
 		}
 		log.fine("Points loaded");
 
@@ -120,13 +128,13 @@ public class Focal implements CanvasHolder {
 
 		context.save();
 		context.translate(width / 2, height / 2);
-
-		for (EuclPoint point : mPointList) {
-			point.draw(context);
-		}
+		context.scale(1.0, 1.0);
 
 		for (Line line : mLineList) {
 			line.draw(context);
+		}
+		for (EuclPoint point : mPointList) {
+			point.draw(context);
 		}
 		context.restore();
 	}

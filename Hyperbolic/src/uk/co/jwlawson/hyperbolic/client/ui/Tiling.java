@@ -18,6 +18,8 @@ package uk.co.jwlawson.hyperbolic.client.ui;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -60,31 +62,38 @@ public class Tiling implements CanvasHolder {
 			return;
 		}
 
-		initSize();
-
 		context = canvas.getContext2d();
-
-		initPoints();
-
 	}
 
 	private void initPoints() {
 		mPointList = new ArrayList<EuclPoint>();
+
+		log.info("loadng points");
 		TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
 		while (orbit.hasNext()) {
 			mPointList.add(orbit.next());
 		}
+		doUpdate();
 
 		mLineList = new ArrayList<Line>();
-		EuclLine.Factory factory = new Factory(width, height);
+		final EuclLine.Factory factory = new Factory(width, height);
 		log.info("Iterating over points");
-		for (EuclPoint p1 : mPointList) {
-			for (EuclPoint p2 : mPointList) {
+		for (final EuclPoint p1 : mPointList) {
+			for (final EuclPoint p2 : mPointList) {
 				if (Math.abs(p1.distance(p2) - 100) < 0.000001) {
-					Line line = factory.getPerpendicularBisector(p1, p2);
-					if (!mLineList.contains(line)) {
-						mLineList.add(line);
-					}
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+						@Override
+						public void execute() {
+
+							Line line = factory.getPerpendicularBisector(p1, p2);
+							if (!mLineList.contains(line)) {
+								mLineList.add(line);
+								doUpdate();
+							}
+						}
+
+					});
 				}
 			}
 		}
