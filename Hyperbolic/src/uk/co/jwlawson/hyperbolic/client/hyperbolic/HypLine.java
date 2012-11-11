@@ -63,7 +63,7 @@ public class HypLine extends Line {
 	public boolean contains(Point p) {
 		EuclPoint e = new EuclPoint(p);
 
-		return Math.abs(e.distance(new Point(centreX, centreY))) < 1E-6;
+		return doubleEquals(e.distance(new Point(centreX, centreY)), 0);
 	}
 
 	@Override
@@ -104,13 +104,70 @@ public class HypLine extends Line {
 			return this;
 		}
 
+		public Builder calcRadius() {
+			setRadius(findRadius(line.centreX, line.centreY));
+
+			return this;
+		}
+
+		private double findRadius(double centreX, double centreY) {
+			return Math.sqrt(centreX * centreX + centreY * centreY - 1);
+		}
+
 		public Builder setRadius(double radius) {
 			line.radius = radius;
 
 			return this;
 		}
 
+		public Builder calcAngles() {
+			Point centre = new Point(line.centreX, line.centreY);
+
+			Point p1 = findIdealPoint1(line.centreX, line.centreY, line.radius);
+			Point p2 = findIdealPoint2(line.centreX, line.centreY, line.radius);
+
+			double a1 = findAngleBetweenPoints(p1, centre);
+			double a2 = findAngleBetweenPoints(p2, centre);
+			setAngles(a1, a2);
+
+			return this;
+		}
+
+		private Point findIdealPoint1(double centreX, double centreY, double radius) {
+			double x = centreX - (centreY * radius);
+			double y = centreY + (centreX * radius);
+			double sq = centreX * centreX + centreY * centreY;
+			x = x / sq;
+			y = y / sq;
+
+			return new Point(x, y);
+		}
+
+		private Point findIdealPoint2(double centreX, double centreY, double radius) {
+			double x = centreX + (centreY * radius);
+			double y = centreY - (centreX * radius);
+			double sq = centreX * centreX + centreY * centreY;
+			x = x / sq;
+			y = y / sq;
+
+			return new Point(x, y);
+		}
+
+		private double findAngleBetweenPoints(Point p1, Point p2) {
+			double dx = p1.getX() - p2.getX();
+			double dy = p1.getY() - p2.getY();
+
+			double theta = Math.atan2(dy, dx);
+			if (theta < 0) {
+				theta += Math.PI * 2;
+			}
+			return theta;
+		}
+
 		public Builder setAngles(double a1, double a2) {
+			a1 = normalizeAngle(a1);
+			a2 = normalizeAngle(a2);
+
 			if ((max(a1, a2) - min(a1, a2)) < Math.PI) {
 				line.startAngle = max(a1, a2);
 				line.endAngle = min(a1, a2);
@@ -120,6 +177,14 @@ public class HypLine extends Line {
 			}
 
 			return this;
+		}
+
+		private double normalizeAngle(double a) {
+			if (a > 2 * Math.PI) {
+				a = a % (2 * Math.PI);
+			}
+
+			return a;
 		}
 
 		private double max(double a, double b) {

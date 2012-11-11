@@ -42,6 +42,28 @@ public class HypLineBuilderTest {
 		builder.build();
 	}
 
+	@Test
+	public void testCalcAngles() {
+		builder.setCentre(1, 1);
+		builder.setRadius(1);
+		builder.calcAngles();
+		HypLine line = builder.build();
+
+		assertEquals(Math.PI, line.getEndAngle(), ERROR);
+		assertEquals(Math.PI * 3 / 2, line.getStartAngle(), ERROR);
+	}
+
+	@Test
+	public void testComplicatedCalcAngles() {
+		builder.setCentre(1, 2);
+		builder.calcRadius();
+		builder.calcAngles();
+		HypLine line = builder.build();
+
+		assertEquals(Math.PI * 3 / 2, line.getStartAngle(), ERROR);
+		assertEquals(3.7850927644, line.getEndAngle(), ERROR);
+	}
+
 	/**
 	 * Test method for
 	 * {@link uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLine.Builder#setAngles(double, double)}
