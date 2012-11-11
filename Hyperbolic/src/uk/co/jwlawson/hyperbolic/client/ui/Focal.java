@@ -113,8 +113,8 @@ public class Focal implements CanvasHolder {
 	public void initSize() {
 		canvas.setWidth(width + "px");
 		canvas.setHeight(height + "px");
-		canvas.setCoordinateSpaceWidth(width);
-		canvas.setCoordinateSpaceHeight(height);
+		canvas.setCoordinateSpaceWidth(2 * width);
+		canvas.setCoordinateSpaceHeight(2 * height);
 
 		initPoints();
 	}
@@ -127,8 +127,8 @@ public class Focal implements CanvasHolder {
 		context.fillRect(-width, -height, width, height);
 
 		context.save();
-		context.translate(width / 2, height / 2);
-		context.scale(1.0, 1.0);
+		context.translate(width, height);
+		context.scale(2.0, 2.0);
 
 		for (Line line : mLineList) {
 			line.draw(context);
