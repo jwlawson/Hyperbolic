@@ -15,6 +15,7 @@
  */
 package uk.co.jwlawson.hyperbolic.client.hyperbolic;
 
+import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
@@ -34,7 +35,57 @@ public class HypLineFactory implements LineFactory {
 
 	@Override
 	public Line getPerpendicularBisector(Point p1, Point p2) {
-		return null;
+
+		Point mapped = findMappedPoint(p1, p2);
+
+		Point centreMapped = findCentreForPerpBisectorWithOrigin(mapped);
+
+		Point centre = inverseCentre(p1, centreMapped);
+
+		builder.setCentre(centre);
+		builder.calcRadius();
+		builder.calcAngles();
+
+		return builder.build();
+	}
+
+	private Point inverseCentre(Point p1, Point centreMapped) {
+		double numX = centreMapped.getX() + p1.getX();
+		double numY = centreMapped.getY() + p1.getY();
+		double denX = 1 + centreMapped.getX() * p1.getX() + centreMapped.getY() * p1.getY();
+		double denY = p1.getX() * centreMapped.getY() - p1.getY() * centreMapped.getX();
+		Point centre = complexDivide(numX, numY, denX, denY);
+		return centre;
+	}
+
+	private Point findMappedPoint(Point p1, Point p2) {
+		double numX = p2.getX() - p1.getX();
+		double numY = p2.getY() - p2.getY();
+		double denX = 1 - p1.getX() * p2.getX() - p1.getY() * p2.getY();
+		double denY = p2.getX() * p1.getY() - p1.getX() * p2.getY();
+		Point mapped = complexDivide(numX, numY, denX, denY);
+		return mapped;
+	}
+
+	private Point findCentreForPerpBisectorWithOrigin(Point p) {
+		EuclPoint eucl = new EuclPoint(p);
+		double rho = eucl.magnitude();
+
+		double d = (2 * rho) / (rho * rho + 1);
+		double x = eucl.getX() / d;
+		double y = (eucl.getY() / eucl.getX()) * x;
+
+		return new Point(x, y);
+	}
+
+	private Point complexDivide(double x1, double y1, double x2, double y2) {
+		double x = x1 * x2 + y1 * y2;
+		double y = y1 * x2 - x1 * y2;
+		double div = x2 * x2 + y2 * y2;
+		x = x / div;
+		y = y / div;
+
+		return new Point(x, y);
 	}
 
 	@Override
