@@ -52,17 +52,16 @@ public class Focal implements CanvasHolder {
 
 	private static final Logger log = Logger.getLogger(Focal.class.getName());
 
-	static final String MOUNT_ID = "focalcanvas";
+	private static final String MOUNT_ID = "focalcanvas";
+	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
 
-	static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
-
-	Canvas canvas;
+	private Canvas canvas;
 
 	private ArrayList<EuclPoint> mPointList;
 	private ArrayList<Line> mLineList;
 
 	// mouse positions relative to canvas
-	int mouseX, mouseY;
+	private int mouseX, mouseY;
 
 	// canvas size, in px
 	private int height = 400;
