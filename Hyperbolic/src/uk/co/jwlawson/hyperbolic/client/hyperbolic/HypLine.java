@@ -21,6 +21,8 @@ import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
+import java.util.logging.Logger;
+
 /**
  * @author John
  * 
@@ -54,8 +56,7 @@ public class HypLine extends Line {
 	public void draw(Context2d context) {
 		context.setFillStyle("#000000");
 		context.beginPath();
-		context.arc(centreX, centreY, radius, startAngle, endAngle, false);
-		context.closePath();
+		context.arc(centreX, centreY, radius, startAngle, endAngle, true);
 		context.stroke();
 	}
 
@@ -78,16 +79,28 @@ public class HypLine extends Line {
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		return "Line centred at ( " + centreX + ", " + centreY + " ) of radius " + radius;
+	}
+
 	private boolean doubleEquals(double a, double b) {
 		return Math.abs(a - b) < 1E-6;
 	}
 
 	public static class Builder {
 
+		private static final Logger log = Logger.getLogger("HypLine.Builder");
 		private HypLine line;
+		private double scale;
 
 		public Builder() {
 			line = new HypLine();
+		}
+
+		public Builder setScale(double scale) {
+			this.scale = scale;
+			return this;
 		}
 
 		public Builder setCentre(Point centre) {
@@ -205,9 +218,18 @@ public class HypLine extends Line {
 
 		public HypLine build() {
 			if (isNotComplete()) {
-				throw new InstantiationError("Ensure all attributes of the line are set");
+				throw new IllegalArgumentException("Ensure all attributes of the line are set");
 			}
+			log.info("About to scale " + line);
+			scaleLine();
+			log.info("About to build " + line);
 			return new HypLine(line);
+		}
+
+		private void scaleLine() {
+			line.centreX = line.centreX * scale;
+			line.centreY = line.centreY * scale;
+			line.radius = line.radius * scale;
 		}
 
 		private boolean isNotComplete() {
