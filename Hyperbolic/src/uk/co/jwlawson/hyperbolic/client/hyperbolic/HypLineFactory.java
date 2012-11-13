@@ -21,16 +21,21 @@ import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLine.Builder;
 
+import java.util.logging.Logger;
+
 /**
  * @author John
  * 
  */
 public class HypLineFactory implements LineFactory {
 
+	private static final Logger log = Logger.getLogger("HypLineFactory");
+	private static final double E_HALF = Math.sqrt(Math.E);
 	private HypLine.Builder builder;
 
-	public HypLineFactory() {
+	public HypLineFactory(double scale) {
 		builder = new Builder();
+		builder.setScale(scale);
 	}
 
 	@Override
@@ -41,6 +46,7 @@ public class HypLineFactory implements LineFactory {
 		Point centreMapped = findCentreForPerpBisectorWithOrigin(mapped);
 
 		Point centre = inverseCentre(p1, centreMapped);
+		log.info("Building line with centre " + centre);
 
 		builder.setCentre(centre);
 		builder.calcRadius();
@@ -49,31 +55,38 @@ public class HypLineFactory implements LineFactory {
 		return builder.build();
 	}
 
+	/** Mobius map that takes p1 to zero. Returns the image of p2 */
+	private Point findMappedPoint(Point p1, Point p2) {
+		double numX = p2.getX() - p1.getX();
+		double numY = p2.getY() - p1.getY();
+		double denX = 1 - p1.getX() * p2.getX() - p1.getY() * p2.getY();
+		double denY = p2.getX() * p1.getY() - p1.getX() * p2.getY();
+		Point mapped = complexDivide(numX, numY, denX, denY);
+		log.info("Mapped point: " + mapped);
+		return mapped;
+	}
+
+	/** Inverse map taking 0 to p1. Returns the image of centreMapped */
 	private Point inverseCentre(Point p1, Point centreMapped) {
 		double numX = centreMapped.getX() + p1.getX();
 		double numY = centreMapped.getY() + p1.getY();
 		double denX = 1 + centreMapped.getX() * p1.getX() + centreMapped.getY() * p1.getY();
 		double denY = p1.getX() * centreMapped.getY() - p1.getY() * centreMapped.getX();
 		Point centre = complexDivide(numX, numY, denX, denY);
+		log.info("Centre: " + centre);
 		return centre;
-	}
-
-	private Point findMappedPoint(Point p1, Point p2) {
-		double numX = p2.getX() - p1.getX();
-		double numY = p2.getY() - p2.getY();
-		double denX = 1 - p1.getX() * p2.getX() - p1.getY() * p2.getY();
-		double denY = p2.getX() * p1.getY() - p1.getX() * p2.getY();
-		Point mapped = complexDivide(numX, numY, denX, denY);
-		return mapped;
 	}
 
 	private Point findCentreForPerpBisectorWithOrigin(Point p) {
 		EuclPoint eucl = new EuclPoint(p);
 		double rho = eucl.magnitude();
+		double d = (rho + 1) / (rho - 1);
+		double dz = (d * E_HALF - 1) / (d * E_HALF + 1);
+		double modifier = (dz * dz + 1) / (2 * dz * rho);
 
-		double d = (2 * rho) / (rho * rho + 1);
-		double x = eucl.getX() / d;
-		double y = (eucl.getY() / eucl.getX()) * x;
+		double x = eucl.getX() * modifier;
+		double y = eucl.getY() * modifier;
+		log.info("Centre found at " + x + ", " + y + " with d = " + d);
 
 		return new Point(x, y);
 	}
