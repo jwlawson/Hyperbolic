@@ -15,7 +15,6 @@
  */
 package uk.co.jwlawson.hyperbolic.client.hyperbolic;
 
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
@@ -30,7 +29,6 @@ import java.util.logging.Logger;
 public class HypLineFactory implements LineFactory {
 
 	private static final Logger log = Logger.getLogger("HypLineFactory");
-	private static final double E_HALF = Math.sqrt(Math.E);
 	private HypLine.Builder builder;
 
 	public HypLineFactory(double scale) {
@@ -41,12 +39,19 @@ public class HypLineFactory implements LineFactory {
 	@Override
 	public Line getPerpendicularBisector(Point p1, Point p2) {
 
+		if (p1.equals(p2)) {
+			throw new IllegalArgumentException("Points cannot be equal: " + p1 + " , " + p2);
+		}
+
+		if (p2.equals(new Point(0, 0))) {
+			return getPerpendicularBisector(p2, p1);
+		}
+
 		Point mapped = findMappedPoint(p1, p2);
 
 		Point centreMapped = findCentreForPerpBisectorWithOrigin(mapped);
 
 		Point centre = inverseCentre(p1, centreMapped);
-		log.info("Building line with centre " + centre);
 
 		builder.setCentre(centre);
 		builder.calcRadius();
@@ -62,7 +67,6 @@ public class HypLineFactory implements LineFactory {
 		double denX = 1 - p1.getX() * p2.getX() - p1.getY() * p2.getY();
 		double denY = p2.getX() * p1.getY() - p1.getX() * p2.getY();
 		Point mapped = complexDivide(numX, numY, denX, denY);
-		log.info("Mapped point: " + mapped);
 		return mapped;
 	}
 
@@ -73,20 +77,19 @@ public class HypLineFactory implements LineFactory {
 		double denX = 1 + centreMapped.getX() * p1.getX() + centreMapped.getY() * p1.getY();
 		double denY = p1.getX() * centreMapped.getY() - p1.getY() * centreMapped.getX();
 		Point centre = complexDivide(numX, numY, denX, denY);
-		log.info("Centre: " + centre);
 		return centre;
 	}
 
 	private Point findCentreForPerpBisectorWithOrigin(Point p) {
-		EuclPoint eucl = new EuclPoint(p);
-		double rho = eucl.magnitude();
-		double d = (rho + 1) / (rho - 1);
-		double dz = (d * E_HALF - 1) / (d * E_HALF + 1);
+		HypPoint hyp = new HypPoint(p);
+		double rho = hyp.euclMag();
+		double hypDist = hyp.magnitude();
+		hypDist = hypDist / 2;
+		double dz = (Math.pow(Math.E, hypDist) - 1) / (Math.pow(Math.E, hypDist) + 1);
 		double modifier = (dz * dz + 1) / (2 * dz * rho);
 
-		double x = eucl.getX() * modifier;
-		double y = eucl.getY() * modifier;
-		log.info("Centre found at " + x + ", " + y + " with d = " + d);
+		double x = p.getX() * modifier;
+		double y = p.getY() * modifier;
 
 		return new Point(x, y);
 	}
@@ -135,5 +138,4 @@ public class HypLineFactory implements LineFactory {
 		a = a / (2 * x1);
 		return a;
 	}
-
 }

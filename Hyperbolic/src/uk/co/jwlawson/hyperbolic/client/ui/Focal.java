@@ -89,13 +89,14 @@ public class Focal implements CanvasHolder {
 		mPointList.add(orbit.next());
 		while (orbit.hasNext()) {
 			final Point next = orbit.next();
-			log.info("adding point " + next);
 			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
 				@Override
 				public void execute() {
+
+					mLineList.add(factory.getPerpendicularBisector(origin, next));
+					next.scale(width / 2);
 					mPointList.add(next);
-					mLineList.add(factory.getPerpendicularBisector(next, origin));
 					doUpdate();
 				}
 			});
@@ -129,10 +130,10 @@ public class Focal implements CanvasHolder {
 
 		context.save();
 		context.translate(width, height);
-		context.scale(2.0, 2.0);
+		context.scale(2.0, -2.0);
 
 		context.beginPath();
-		context.arc(0, 0, 1, 0, 2 * Math.PI);
+		context.arc(0, 0, width / 2, 0, 2 * Math.PI);
 		context.closePath();
 		context.setStrokeStyle("#000000");
 		context.setLineWidth(0.5);

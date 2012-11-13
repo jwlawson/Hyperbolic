@@ -18,7 +18,6 @@ package uk.co.jwlawson.hyperbolic.client.hyperbolic;
 import com.google.gwt.canvas.dom.client.Context2d;
 
 import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
-import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.framework.Measurable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
@@ -28,7 +27,7 @@ import java.util.logging.Logger;
  * @author John
  * 
  */
-public class HypPoint extends Point implements Drawable, Measurable {
+public class HypPoint extends Point implements Measurable {
 
 	private static final Logger log = Logger.getLogger("HypPoint");
 	private EuclPoint eucl;
@@ -70,6 +69,10 @@ public class HypPoint extends Point implements Drawable, Measurable {
 		return Math.log((1 + mag) / (1 - mag));
 	}
 
+	public double euclMag() {
+		return eucl.magnitude();
+	}
+
 	@Override
 	public void setX(double x) {
 		eucl.setX(x);
@@ -86,7 +89,6 @@ public class HypPoint extends Point implements Drawable, Measurable {
 
 	@Override
 	public void draw(Context2d context) {
-		log.info("drawing point " + this);
 		context.setFillStyle("#ff0000");
 		context.beginPath();
 		context.arc(getX(), getY(), 2.5, 0, 2 * Math.PI);

@@ -220,9 +220,7 @@ public class HypLine extends Line {
 			if (isNotComplete()) {
 				throw new IllegalArgumentException("Ensure all attributes of the line are set");
 			}
-			log.info("About to scale " + line);
 			scaleLine();
-			log.info("About to build " + line);
 			return new HypLine(line);
 		}
 

@@ -25,8 +25,8 @@ import java.util.Iterator;
  */
 public class HypOrbitPoints implements Iterator<Point> {
 
-	private double[] xes = new double[] { 0, 0.5, 0, -0.5, 0 };
-	private double[] yes = new double[] { 0, 0, 0.5, 0, -0.5 };
+	private double[] xes = new double[] { 0, 0.5, 0, -0.5, 0, 0.25, 0.8, 0.5 };
+	private double[] yes = new double[] { 0, 0, 0.5, 0, -0.5, 0.25, -0.45, 0.5 };
 
 	private int count = -1;
 
