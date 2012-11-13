@@ -34,12 +34,10 @@ import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclLine;
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclLine.Factory;
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.group.TorusOrbitPoints;
+import uk.co.jwlawson.hyperbolic.client.group.HypOrbitPoints;
+import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLineFactory;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -57,7 +55,7 @@ public class Focal implements CanvasHolder {
 
 	private Canvas canvas;
 
-	private ArrayList<EuclPoint> mPointList;
+	private ArrayList<Point> mPointList;
 	private ArrayList<Line> mLineList;
 
 	// mouse positions relative to canvas
@@ -82,18 +80,16 @@ public class Focal implements CanvasHolder {
 
 	private void initPoints() {
 		log.info("Loading points");
-		mPointList = new ArrayList<EuclPoint>();
+		mPointList = new ArrayList<Point>();
 		mLineList = new ArrayList<Line>();
-
-		final EuclLine.Factory factory = new Factory(width, height);
 		final Point origin = new Point(0, 0);
 
-		TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		// Treat first entry (0,0) specially, as don't want it in focal
-		// decomp.
+		final HypLineFactory factory = new HypLineFactory(width / 2);
+		HypOrbitPoints orbit = new HypOrbitPoints();
 		mPointList.add(orbit.next());
 		while (orbit.hasNext()) {
-			final EuclPoint next = orbit.next();
+			final Point next = orbit.next();
+			log.info("adding point " + next);
 			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
 				@Override
@@ -105,6 +101,12 @@ public class Focal implements CanvasHolder {
 			});
 
 		}
+		// @formatter:off
+		/*final EuclLine.Factory factory = new Factory(width, height);
+		TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
+		*/
+		// @formatter:on
+
 		log.fine("Points loaded");
 
 	}
@@ -129,10 +131,17 @@ public class Focal implements CanvasHolder {
 		context.translate(width, height);
 		context.scale(2.0, 2.0);
 
+		context.beginPath();
+		context.arc(0, 0, 1, 0, 2 * Math.PI);
+		context.closePath();
+		context.setStrokeStyle("#000000");
+		context.setLineWidth(0.5);
+		context.stroke();
+
 		for (Line line : mLineList) {
 			line.draw(context);
 		}
-		for (EuclPoint point : mPointList) {
+		for (Point point : mPointList) {
 			point.draw(context);
 		}
 		context.restore();
