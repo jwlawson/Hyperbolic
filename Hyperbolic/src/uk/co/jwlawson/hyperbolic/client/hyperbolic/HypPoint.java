@@ -22,12 +22,15 @@ import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.framework.Measurable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
+import java.util.logging.Logger;
+
 /**
  * @author John
  * 
  */
 public class HypPoint extends Point implements Drawable, Measurable {
 
+	private static final Logger log = Logger.getLogger("HypPoint");
 	private EuclPoint eucl;
 
 	public static boolean isValid(Point p) {
@@ -83,6 +86,7 @@ public class HypPoint extends Point implements Drawable, Measurable {
 
 	@Override
 	public void draw(Context2d context) {
+		log.info("drawing point " + this);
 		context.setFillStyle("#ff0000");
 		context.beginPath();
 		context.arc(getX(), getY(), 2.5, 0, 2 * Math.PI);

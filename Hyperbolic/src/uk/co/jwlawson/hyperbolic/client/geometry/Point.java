@@ -15,11 +15,15 @@
  */
 package uk.co.jwlawson.hyperbolic.client.geometry;
 
+import com.google.gwt.canvas.dom.client.Context2d;
+
+import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
+
 /**
  * @author John Lawson
  * 
  */
-public class Point {
+public class Point implements Drawable {
 
 	private static final double ERROR = Math.pow(10, -3);
 
@@ -61,5 +65,9 @@ public class Point {
 	@Override
 	public String toString() {
 		return "( " + x + " , " + y + " )";
+	}
+
+	@Override
+	public void draw(Context2d context) {
 	}
 }
