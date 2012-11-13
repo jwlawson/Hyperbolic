@@ -15,10 +15,10 @@
 
     <!-- Other module inherits -->
     <inherits name="com.google.gwt.logging.Logging" />
-    <set-property
+    <!-- <set-property
         name="gwt.logging.enabled"
         value="FALSE" />
-
+	-->
     <!-- Specify the app entry point class. -->
     <entry-point class="uk.co.jwlawson.hyperbolic.client.Hyperbolic" />
 
