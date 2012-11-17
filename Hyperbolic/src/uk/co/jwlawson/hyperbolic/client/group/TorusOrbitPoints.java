@@ -15,11 +15,11 @@
  */
 package uk.co.jwlawson.hyperbolic.client.group;
 
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 
 /**
  * @author John
@@ -78,14 +78,11 @@ public class TorusOrbitPoints implements Iterator<EuclPoint> {
 		ArrayList<EuclPoint> result = new ArrayList<EuclPoint>();
 
 		for (int x = depth; x >= 0; x--) {
-			for (int y = depth; y >= 0; y--) {
-				if (x + y == depth) {
-					result.add(new EuclPoint(x * SIZE, y * SIZE));
-					if (x != 0) result.add(new EuclPoint(-x * SIZE, y * SIZE));
-					if (y != 0) result.add(new EuclPoint(x * SIZE, -y * SIZE));
-					if (x != 0 && y != 0) result.add(new EuclPoint(-x * SIZE, -y * SIZE));
-				}
-			}
+			int y = depth - x;
+			result.add(new EuclPoint(x * SIZE, y * SIZE));
+			if (x != 0) result.add(new EuclPoint(-x * SIZE, y * SIZE));
+			if (y != 0) result.add(new EuclPoint(x * SIZE, -y * SIZE));
+			if (x != 0 && y != 0) result.add(new EuclPoint(-x * SIZE, -y * SIZE));
 		}
 
 		return result;
