@@ -15,13 +15,13 @@
  */
 package uk.co.jwlawson.hyperbolic.client.hyperbolic;
 
-import com.google.gwt.canvas.dom.client.Context2d;
+import java.util.logging.Logger;
 
 import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.framework.Measurable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
-import java.util.logging.Logger;
+import com.google.gwt.canvas.dom.client.Context2d;
 
 /**
  * @author John
@@ -51,7 +51,7 @@ public class HypPoint extends Point implements Measurable {
 
 	private void checkValid() {
 		if (eucl.magnitude() >= 1) {
-			throw new IllegalArgumentException("Point must lie within the unit disc");
+			throw new IllegalArgumentException("Point must lie within the unit disc: " + eucl);
 		}
 	}
 
@@ -85,6 +85,14 @@ public class HypPoint extends Point implements Measurable {
 		eucl.setY(y);
 		checkValid();
 		super.setY(y);
+	}
+
+	@Override
+	public void clone(Point p) {
+		eucl.setX(p.getX());
+		eucl.setY(p.getY());
+		checkValid();
+		super.clone(p);
 	}
 
 	@Override
