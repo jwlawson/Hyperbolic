@@ -15,9 +15,9 @@
  */
 package uk.co.jwlawson.hyperbolic.client.geometry;
 
-import com.google.gwt.canvas.dom.client.Context2d;
-
 import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
+
+import com.google.gwt.canvas.dom.client.Context2d;
 
 /**
  * @author John Lawson
@@ -36,6 +36,11 @@ public class Point implements Drawable {
 	}
 
 	public Point(Point p) {
+		this.x = p.getX();
+		this.y = p.getY();
+	}
+
+	public void clone(Point p) {
 		this.x = p.getX();
 		this.y = p.getY();
 	}
@@ -74,7 +79,7 @@ public class Point implements Drawable {
 
 	@Override
 	public void draw(Context2d context) {
-		context.setFillStyle("#00ff00");
+		context.setFillStyle("#ff0000");
 		context.beginPath();
 		context.arc(getX(), getY(), 2.5, 0, 2 * Math.PI);
 		context.closePath();
