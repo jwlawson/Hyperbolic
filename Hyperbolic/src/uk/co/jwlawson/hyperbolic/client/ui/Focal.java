@@ -15,6 +15,14 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
+import java.util.ArrayList;
+import java.util.logging.Logger;
+
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.group.HypOrbitPoints;
+import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLineFactory;
+
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -33,14 +41,6 @@ import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-
-import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.group.HypOrbitPoints;
-import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLineFactory;
-
-import java.util.ArrayList;
-import java.util.logging.Logger;
 
 /**
  * @author John
@@ -84,30 +84,31 @@ public class Focal implements CanvasHolder {
 		mLineList = new ArrayList<Line>();
 		final Point origin = new Point(0, 0);
 
+		// Change this bit!
 		final HypLineFactory factory = new HypLineFactory(width / 2);
-		HypOrbitPoints orbit = new HypOrbitPoints();
+		final HypOrbitPoints orbit = new HypOrbitPoints();
+		// ----------------------
+		// final EuclLine.Factory factory = new Factory(width, height);
+		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
+
 		mPointList.add(orbit.next());
-		while (orbit.hasNext()) {
-			final Point next = orbit.next();
+
+		for (int num = 0; num < 100; num++) {
 			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
 				@Override
 				public void execute() {
-
-					mLineList.add(factory.getPerpendicularBisector(origin, next));
-					next.scale(width / 2);
-					mPointList.add(next);
+					for (int count = 5; (count > 0) && orbit.hasNext(); count--) {
+						final Point next = orbit.next();
+						mLineList.add(factory.getPerpendicularBisector(origin, next));
+						next.scale(width / 2);
+						mPointList.add(next);
+					}
 					doUpdate();
 				}
 			});
 
 		}
-		// @formatter:off
-		/*final EuclLine.Factory factory = new Factory(width, height);
-		TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		*/
-		// @formatter:on
-
 		log.fine("Points loaded");
 
 	}
