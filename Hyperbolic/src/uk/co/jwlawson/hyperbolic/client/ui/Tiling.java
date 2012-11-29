@@ -23,11 +23,10 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclLine;
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclLine.Factory;
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.group.TorusOrbitPoints;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
+import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLineFactory;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -43,7 +42,7 @@ public class Tiling implements CanvasHolder {
 
 	private static final Logger log = Logger.getLogger("Tiling");
 	private ArrayList<Line> mLineList;
-	private ArrayList<EuclPoint> mPointList;
+	private ArrayList<Point> mPointList;
 
 	private Canvas canvas;
 	private Context2d context;
@@ -66,36 +65,40 @@ public class Tiling implements CanvasHolder {
 	}
 
 	private void initPoints() {
-		mPointList = new ArrayList<EuclPoint>();
+		mPointList = new ArrayList<Point>();
 
 		log.info("loadng points");
-		TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
+		// Change this bit!
+		final HypLineFactory factory = new HypLineFactory(width / 2);
+		// final HypOrbitPoints orbit = new HypOrbitPoints();
+		// ----------------------
+		// final EuclLine.Factory factory = new Factory(width, height);
+		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
+		final IdealTorusOrbit orbit = new IdealTorusOrbit(1.5, 1.5);
+
 		while (orbit.hasNext()) {
 			mPointList.add(orbit.next());
 		}
 		doUpdate();
 
 		mLineList = new ArrayList<Line>();
-		final EuclLine.Factory factory = new Factory(width, height);
 		log.info("Iterating over points");
-		for (final EuclPoint p1 : mPointList) {
-			for (final EuclPoint p2 : mPointList) {
-				if (Math.abs(p1.distance(p2) - 100) < 0.000001) {
-					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+		final Point p1 = new Point(0, 0);
+		for (int i = 1; i <= 4; i++) {
+			final Point p2 = mPointList.get(i);
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
-						@Override
-						public void execute() {
+				@Override
+				public void execute() {
 
-							Line line = factory.getPerpendicularBisector(p1, p2);
-							if (!mLineList.contains(line)) {
-								mLineList.add(line);
-								doUpdate();
-							}
-						}
-
-					});
+					Line line = factory.getPerpendicularBisector(p1, p2);
+					if (!mLineList.contains(line)) {
+						mLineList.add(line);
+						doUpdate();
+					}
 				}
-			}
+
+			});
 		}
 	}
 
@@ -116,14 +119,20 @@ public class Tiling implements CanvasHolder {
 
 		context.save();
 		context.translate(width, height);
-		context.scale(2.0, 2.0);
+		context.scale(2.0, -2.0);
 
-		for (EuclPoint point : mPointList) {
-			point.draw(context);
-		}
+		context.beginPath();
+		context.arc(0, 0, width / 2, 0, 2 * Math.PI);
+		context.closePath();
+		context.setStrokeStyle("#000000");
+		context.setLineWidth(0.5);
+		context.stroke();
 
 		for (Line line : mLineList) {
 			line.draw(context);
+		}
+		for (Point point : mPointList) {
+			point.draw(context);
 		}
 		context.restore();
 	}

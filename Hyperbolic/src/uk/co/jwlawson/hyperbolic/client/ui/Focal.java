@@ -15,14 +15,6 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
-import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.group.HypOrbitPoints;
-import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLineFactory;
-
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -41,6 +33,14 @@ import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
+import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLineFactory;
+
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * @author John
@@ -86,10 +86,11 @@ public class Focal implements CanvasHolder {
 
 		// Change this bit!
 		final HypLineFactory factory = new HypLineFactory(width / 2);
-		final HypOrbitPoints orbit = new HypOrbitPoints();
+		// final HypOrbitPoints orbit = new HypOrbitPoints();
 		// ----------------------
 		// final EuclLine.Factory factory = new Factory(width, height);
 		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
+		final IdealTorusOrbit orbit = new IdealTorusOrbit(1.5, 1.5);
 
 		mPointList.add(orbit.next());
 
@@ -98,7 +99,7 @@ public class Focal implements CanvasHolder {
 
 				@Override
 				public void execute() {
-					for (int count = 5; (count > 0) && orbit.hasNext(); count--) {
+					for (int count = 6; (count > 0) && orbit.hasNext(); count--) {
 						final Point next = orbit.next();
 						mLineList.add(factory.getPerpendicularBisector(origin, next));
 						next.scale(width / 2);
