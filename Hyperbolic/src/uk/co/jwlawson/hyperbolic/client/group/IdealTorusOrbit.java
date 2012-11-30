@@ -25,26 +25,32 @@ public class IdealTorusOrbit extends Gen2OrbitPoints {
 		this(getIsomA(a, b), getIsomB(a, b));
 	}
 
-	private static IsomD getIsomB(double a, double b) {
-		double ax2 = 1 / b + b + (b * b * b) / (a * a);
-		double ay2 = b + 1 / b;
+	private static IsomD getIsomA(double a, double b) {
+		double t = -(a * a) / (b * b);
 
-		double bx2 = -1 / b - b - (b * b * b) / (a * a);
-		double by2 = b - 1 / b;
+		double ax2 = -a - (1 / a) + a * t;
+		double ay2 = a + a * t;
 
-		IsomD B = new IsomD(ax2, ay2, bx2, by2);
-		return B;
+		double bx2 = -a - (a * t) + (1 / a);
+		double by2 = a - (a * t);
+
+		System.out.println("Found Isom A: " + ax2 + " + i" + ay2 + ", " + bx2 + " + i" + by2);
+
+		return new IsomD(ax2, ay2, bx2, by2);
 	}
 
-	private static IsomD getIsomA(double a, double b) {
-		double ax1 = a + b * b / a + a / (b * b);
-		double ay1 = a * (1 / (b * b) - 1);
+	private static IsomD getIsomB(double a, double b) {
+		double t = -(a * a) / (b * b);
 
-		double bx1 = a + b * b / a - a / (b * b);
-		double by1 = -a - a / (b * b);
+		double ax1 = -b * t - (1 / (b * t)) + b;
+		double ay1 = b + (b * t);
 
-		IsomD A = new IsomD(ax1, ay1, bx1, by1);
-		return A;
+		double bx1 = -b * t + 1 / (b * t) - b;
+		double by1 = b - (b * t);
+
+		System.out.println("Found Isom B: " + ax1 + " + i" + ay1 + ", " + bx1 + " + i" + by1);
+
+		return new IsomD(ax1, ay1, bx1, by1);
 	}
 
 	public IdealTorusOrbit(IsomD A, IsomD B) {

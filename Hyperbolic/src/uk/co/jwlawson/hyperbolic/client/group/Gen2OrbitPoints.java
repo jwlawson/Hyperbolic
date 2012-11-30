@@ -18,8 +18,9 @@ package uk.co.jwlawson.hyperbolic.client.group;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypPoint;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author John
@@ -29,14 +30,14 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 
 	private IsomD A, B, Am, Bm;
 
-	private LinkedList<Point> masterList;
+	private List<Point> masterList;
 
-	private LinkedList<Point> currentList;
-	private LinkedList<Map> currentMapList;
+	private List<Point> currentList;
+	private List<Map> currentMapList;
 	private Iterator<Point> currentIter;
 
-	private LinkedList<Point> nextList;
-	private LinkedList<Map> nextMapList;
+	private List<Point> nextList;
+	private List<Map> nextMapList;
 
 	private int count = 0;
 	private int index = 0;
@@ -44,15 +45,17 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 	private Point current, next;
 	private HypPoint hyp;
 
+	private boolean calcMore = true;
+
 	public Gen2OrbitPoints(IsomD A, IsomD B) {
 		this.A = A;
 		this.B = B;
 		Am = A.getInverse();
 		Bm = B.getInverse();
 
-		masterList = new LinkedList<Point>();
-		currentList = new LinkedList<Point>();
-		currentMapList = new LinkedList<Gen2OrbitPoints.Map>();
+		masterList = new ArrayList<Point>();
+		currentList = new ArrayList<Point>();
+		currentMapList = new ArrayList<Gen2OrbitPoints.Map>();
 		currentMapList.add(Map.Null);
 
 		next = new HypPoint(0, 0);
@@ -61,8 +64,8 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 		currentIter = currentList.iterator();
 		currentIter.next();
 
-		nextList = new LinkedList<Point>();
-		nextMapList = new LinkedList<Gen2OrbitPoints.Map>();
+		nextList = new ArrayList<Point>();
+		nextMapList = new ArrayList<Gen2OrbitPoints.Map>();
 
 		hyp = new HypPoint(next);
 	}
@@ -70,7 +73,8 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 	@Override
 	public boolean hasNext() {
 		hyp.clone(next);
-		if (count > 200 && hyp.euclMag() > 0.99) {
+		if (count > 400 || hyp.euclMag() > 0.999) {
+			calcMore = false;
 			return currentIter.hasNext();
 		} else {
 			return true;
@@ -82,15 +86,17 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 
 		current = new Point(next);
 
-		calculateNextLevel(current);
-
+		if (calcMore) {
+			calculateNextLevel(current);
+		}
 		if (currentIter.hasNext()) {
 			next = currentIter.next();
 			index++;
 		} else {
 			masterList.addAll(nextList);
-			currentList = new LinkedList<Point>(nextList);
-			currentMapList = new LinkedList<Map>(nextMapList);
+			System.out.println("Adding " + nextList.size() + " points to the master");
+			currentList = new ArrayList<Point>(nextList);
+			currentMapList = new ArrayList<Map>(nextMapList);
 			currentIter = currentList.iterator();
 			nextList.clear();
 			nextMapList.clear();
@@ -99,71 +105,46 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 		}
 
 		count++;
+		System.out.println(count);
 		return current;
 	}
 
 	private void calculateNextLevel(Point p) {
-		switch (currentMapList.get(index)) {
-		case A:
-			nextList.add(A.map(p));
-			nextMapList.add(Map.A);
 
-			nextList.add(B.map(p));
-			nextMapList.add(Map.B);
+		Map map = currentMapList.get(index);
 
-			nextList.add(Bm.map(p));
-			nextMapList.add(Map.Bm);
-
-			break;
-
-		case B:
-			nextList.add(A.map(p));
-			nextMapList.add(Map.A);
-
-			nextList.add(B.map(p));
-			nextMapList.add(Map.B);
-
-			nextList.add(Bm.map(p));
-			nextMapList.add(Map.Bm);
-			break;
-
-		case Am:
-			nextList.add(Am.map(p));
-			nextMapList.add(Map.Am);
-
-			nextList.add(B.map(p));
-			nextMapList.add(Map.B);
-
-			nextList.add(Bm.map(p));
-			nextMapList.add(Map.Bm);
-			break;
-
-		case Bm:
-			nextList.add(A.map(p));
-			nextMapList.add(Map.A);
-
-			nextList.add(B.map(p));
-			nextMapList.add(Map.B);
-
-			nextList.add(Am.map(p));
-			nextMapList.add(Map.Am);
-			break;
-
-		case Null:
-			nextList.add(A.map(p));
-			nextMapList.add(Map.A);
-
-			nextList.add(B.map(p));
-			nextMapList.add(Map.B);
-
-			nextList.add(Bm.map(p));
-			nextMapList.add(Map.Bm);
-
-			nextList.add(Am.map(p));
-			nextMapList.add(Map.Am);
-
-			break;
+		Point q;
+		if (!map.equals(Map.A)) {
+			q = A.map(p);
+			if (!(masterList.contains(q) || nextList.contains(q))) {
+				nextList.add(A.map(p));
+				nextMapList.add(Map.A);
+			}
 		}
+		if (!map.equals(Map.B)) {
+			q = B.map(p);
+			if (!(masterList.contains(q) || nextList.contains(q))) {
+				nextList.add(B.map(p));
+				nextMapList.add(Map.B);
+			}
+		}
+
+		if (!map.equals(Map.Bm)) {
+			q = Bm.map(p);
+			if (!(masterList.contains(q) || nextList.contains(q))) {
+				nextList.add(Bm.map(p));
+				nextMapList.add(Map.Bm);
+			}
+		}
+
+		if (!map.equals(Map.Am)) {
+			q = Am.map(p);
+			if (!(masterList.contains(q) || nextList.contains(q))) {
+				nextList.add(Am.map(p));
+				nextMapList.add(Map.Am);
+			}
+		}
+
 	}
 
 	@Override

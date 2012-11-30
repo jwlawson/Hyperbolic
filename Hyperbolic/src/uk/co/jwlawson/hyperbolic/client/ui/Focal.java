@@ -19,7 +19,7 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.dom.client.Touch;
 import com.google.gwt.event.dom.client.GestureStartEvent;
 import com.google.gwt.event.dom.client.GestureStartHandler;
@@ -52,6 +52,7 @@ public class Focal implements CanvasHolder {
 
 	private static final String MOUNT_ID = "focalcanvas";
 	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
+	private static final long PROFILE_TIME = 10000;
 
 	private Canvas canvas;
 
@@ -67,6 +68,9 @@ public class Focal implements CanvasHolder {
 
 	private final CssColor redrawColor = CssColor.make("rgb(255,255,255)");
 	private Context2d context;
+
+	private int profileFrameCount = 0;
+	private long profileTimeCount = 0;
 
 	public Focal() {
 		canvas = Canvas.createIfSupported();
@@ -90,26 +94,27 @@ public class Focal implements CanvasHolder {
 		// ----------------------
 		// final EuclLine.Factory factory = new Factory(width, height);
 		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		final IdealTorusOrbit orbit = new IdealTorusOrbit(1.5, 1.5);
+		final IdealTorusOrbit orbit = new IdealTorusOrbit(1 / Math.sqrt(2), 1 / Math.sqrt(2));
 
 		mPointList.add(orbit.next());
 
-		for (int num = 0; num < 100; num++) {
-			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+		Scheduler.get().scheduleIncremental(new RepeatingCommand() {
 
-				@Override
-				public void execute() {
-					for (int count = 6; (count > 0) && orbit.hasNext(); count--) {
-						final Point next = orbit.next();
-						mLineList.add(factory.getPerpendicularBisector(origin, next));
-						next.scale(width / 2);
-						mPointList.add(next);
-					}
-					doUpdate();
-				}
-			});
+			@Override
+			public boolean execute() {
+				Point next = orbit.next();
+				Line line = factory.getPerpendicularBisector(origin, next);
+				mLineList.add(line);
+				next.scale(width / 2);
+				mPointList.add(next);
+				doUpdate();
+				// next.draw(context);
+				// line.draw(context);
 
-		}
+				return orbit.hasNext();
+			}
+		});
+
 		log.fine("Points loaded");
 
 	}
@@ -125,6 +130,8 @@ public class Focal implements CanvasHolder {
 
 	@Override
 	public void doUpdate() {
+
+		long start = System.currentTimeMillis();
 
 		// update the back canvas
 		context.setFillStyle(redrawColor);
@@ -148,6 +155,19 @@ public class Focal implements CanvasHolder {
 			point.draw(context);
 		}
 		context.restore();
+
+		long end = System.currentTimeMillis();
+
+		profileTimeCount += end - start;
+		profileFrameCount++;
+
+		if (profileTimeCount > PROFILE_TIME) {
+			log.info("Drawing time: " + profileTimeCount / profileFrameCount
+					+ " ms per frame.  Points: " + mPointList.size() + "  Lines: "
+					+ mLineList.size());
+			profileFrameCount = 0;
+			profileTimeCount = 0;
+		}
 	}
 
 	@Override

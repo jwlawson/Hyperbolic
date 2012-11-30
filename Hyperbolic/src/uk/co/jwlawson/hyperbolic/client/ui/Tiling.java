@@ -74,7 +74,7 @@ public class Tiling implements CanvasHolder {
 		// ----------------------
 		// final EuclLine.Factory factory = new Factory(width, height);
 		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		final IdealTorusOrbit orbit = new IdealTorusOrbit(1.5, 1.5);
+		final IdealTorusOrbit orbit = new IdealTorusOrbit(1 / Math.sqrt(2), 1 / Math.sqrt(2));
 
 		while (orbit.hasNext()) {
 			mPointList.add(orbit.next());

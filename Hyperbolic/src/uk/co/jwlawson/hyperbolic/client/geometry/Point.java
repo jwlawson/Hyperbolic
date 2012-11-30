@@ -15,9 +15,9 @@
  */
 package uk.co.jwlawson.hyperbolic.client.geometry;
 
-import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
-
 import com.google.gwt.canvas.dom.client.Context2d;
+
+import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 
 /**
  * @author John Lawson
@@ -25,7 +25,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
  */
 public class Point implements Drawable {
 
-	private static final double ERROR = Math.pow(10, -3);
+	private static final double ERROR = 10E-6;
 
 	private double x;
 	private double y;
