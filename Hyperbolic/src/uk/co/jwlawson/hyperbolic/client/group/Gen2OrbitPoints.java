@@ -73,7 +73,7 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 	@Override
 	public boolean hasNext() {
 		hyp.clone(next);
-		if (count > 400 || hyp.euclMag() > 0.999) {
+		if (count > 600 || hyp.euclMag() > 0.9999999) {
 			calcMore = false;
 			return currentIter.hasNext();
 		} else {
@@ -114,33 +114,33 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 		Map map = currentMapList.get(index);
 
 		Point q;
-		if (!map.equals(Map.A)) {
+		if (!map.equals(Map.Am)) {
 			q = A.map(p);
 			if (!(masterList.contains(q) || nextList.contains(q))) {
-				nextList.add(A.map(p));
+				nextList.add(q);
 				nextMapList.add(Map.A);
 			}
 		}
-		if (!map.equals(Map.B)) {
+		if (!map.equals(Map.Bm)) {
 			q = B.map(p);
 			if (!(masterList.contains(q) || nextList.contains(q))) {
-				nextList.add(B.map(p));
+				nextList.add(q);
 				nextMapList.add(Map.B);
 			}
 		}
 
-		if (!map.equals(Map.Bm)) {
+		if (!map.equals(Map.B)) {
 			q = Bm.map(p);
 			if (!(masterList.contains(q) || nextList.contains(q))) {
-				nextList.add(Bm.map(p));
+				nextList.add(q);
 				nextMapList.add(Map.Bm);
 			}
 		}
 
-		if (!map.equals(Map.Am)) {
+		if (!map.equals(Map.A)) {
 			q = Am.map(p);
 			if (!(masterList.contains(q) || nextList.contains(q))) {
-				nextList.add(Am.map(p));
+				nextList.add(q);
 				nextMapList.add(Map.Am);
 			}
 		}

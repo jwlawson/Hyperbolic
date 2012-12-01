@@ -66,11 +66,8 @@ public class Focal implements CanvasHolder {
 	private int height = 400;
 	private int width = 400;
 
-	private final CssColor redrawColor = CssColor.make("rgb(255,255,255)");
+	private CssColor redrawColor = CssColor.make("rgb(255,255,255)");
 	private Context2d context;
-
-	private int profileFrameCount = 0;
-	private long profileTimeCount = 0;
 
 	public Focal() {
 		canvas = Canvas.createIfSupported();
@@ -107,11 +104,26 @@ public class Focal implements CanvasHolder {
 				mLineList.add(line);
 				next.scale(width / 2);
 				mPointList.add(next);
-				doUpdate();
-				// next.draw(context);
-				// line.draw(context);
+
+				context.save();
+				context.translate(width, height);
+				context.scale(2.0, -2.0);
+				next.draw(context);
+				line.draw(context);
+				context.restore();
+
+				if (!orbit.hasNext()) {
+					computeFinished();
+				}
 
 				return orbit.hasNext();
+			}
+
+			private void computeFinished() {
+				System.out.println("Compute done!");
+				redrawColor = CssColor.make("#ffffff");
+				doUpdate();
+
 			}
 		});
 
@@ -131,11 +143,8 @@ public class Focal implements CanvasHolder {
 	@Override
 	public void doUpdate() {
 
-		long start = System.currentTimeMillis();
-
-		// update the back canvas
 		context.setFillStyle(redrawColor);
-		context.fillRect(-width, -height, width, height);
+		context.fillRect(0, 0, 2 * width, 2 * height);
 
 		context.save();
 		context.translate(width, height);
@@ -155,19 +164,8 @@ public class Focal implements CanvasHolder {
 			point.draw(context);
 		}
 		context.restore();
+		System.out.println("Update done");
 
-		long end = System.currentTimeMillis();
-
-		profileTimeCount += end - start;
-		profileFrameCount++;
-
-		if (profileTimeCount > PROFILE_TIME) {
-			log.info("Drawing time: " + profileTimeCount / profileFrameCount
-					+ " ms per frame.  Points: " + mPointList.size() + "  Lines: "
-					+ mLineList.size());
-			profileFrameCount = 0;
-			profileTimeCount = 0;
-		}
 	}
 
 	@Override

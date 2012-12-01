@@ -45,9 +45,19 @@ public class Point implements Drawable {
 		this.y = p.getY();
 	}
 
-	public boolean equals(Point p) {
-		boolean result = (Math.abs(p.x - x) < ERROR);
-		result &= (Math.abs(p.y - y) < ERROR);
+	@Override
+	public boolean equals(Object p) {
+		boolean result;
+
+		if (p instanceof Point) {
+			Point q = (Point) p;
+			result = (Math.abs(q.x - x) < ERROR);
+			result &= (Math.abs(q.y - y) < ERROR);
+
+		} else {
+			result = false;
+		}
+
 		return result;
 	}
 
@@ -81,7 +91,7 @@ public class Point implements Drawable {
 	public void draw(Context2d context) {
 		context.setFillStyle("#ff0000");
 		context.beginPath();
-		context.arc(getX(), getY(), 2.5, 0, 2 * Math.PI);
+		context.arc(getX(), getY(), 2.0, 0, 2 * Math.PI);
 		context.closePath();
 		context.fill();
 	}
