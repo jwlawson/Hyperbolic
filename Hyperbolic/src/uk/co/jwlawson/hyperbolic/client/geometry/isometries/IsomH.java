@@ -51,4 +51,8 @@ public class IsomH extends Isom {
 		return new IsomD(a + d, b - c, a - d, -b - c);
 	}
 
+	public static IsomD getIsomD(double a, double b, double c, double d) {
+		return new IsomD(a + d, b - c, a - d, -b - c);
+	}
+
 }

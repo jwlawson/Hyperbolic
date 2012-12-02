@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.jwlawson.hyperbolic.client.hyperbolic;
+package uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic;
 
 import java.util.logging.Logger;
 
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.framework.Measurable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclPoint;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 

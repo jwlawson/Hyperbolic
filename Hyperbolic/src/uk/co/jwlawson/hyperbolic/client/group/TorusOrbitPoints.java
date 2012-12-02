@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.jwlawson.hyperbolic.client.euclidean.EuclPoint;
+import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclPoint;
 
 /**
  * @author John

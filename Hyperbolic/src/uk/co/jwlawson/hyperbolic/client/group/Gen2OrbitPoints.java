@@ -20,8 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.isometries.Isom;
-import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypPoint;
 
 /**
  * @author John

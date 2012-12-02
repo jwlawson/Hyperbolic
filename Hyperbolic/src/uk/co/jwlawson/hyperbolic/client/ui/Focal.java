@@ -36,8 +36,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
 import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
-import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypLineFactory;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypPoint;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
 
 /**
  * @author John
