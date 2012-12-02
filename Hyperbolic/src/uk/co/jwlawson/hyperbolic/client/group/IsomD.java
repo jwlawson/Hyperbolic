@@ -21,7 +21,7 @@ import uk.co.jwlawson.hyperbolic.client.geometry.Point;
  * @author John
  * 
  */
-public class IsomD {
+public class IsomD extends Isom {
 
 	private Point a, b;
 
@@ -35,10 +35,12 @@ public class IsomD {
 		b = new Point(bx, by);
 	}
 
-	public IsomD getInverse() {
+	@Override
+	public Isom getInverse() {
 		return new IsomD(a.getX(), -a.getY(), -b.getX(), -b.getY());
 	}
 
+	@Override
 	public Point map(Point z) {
 		double numX = a.getX() * z.getX() - a.getY() * z.getY() + b.getX();
 		double numY = a.getX() * z.getY() + a.getY() * z.getX() + b.getY();

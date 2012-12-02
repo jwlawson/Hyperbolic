@@ -15,12 +15,12 @@
  */
 package uk.co.jwlawson.hyperbolic.client.group;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 import uk.co.jwlawson.hyperbolic.client.hyperbolic.HypPoint;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author John
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class Gen2OrbitPoints implements Iterator<Point> {
 
-	private IsomD A, B, Am, Bm;
+	private Isom A, B, Am, Bm;
 
 	private List<Point> masterList;
 
@@ -47,15 +47,15 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 
 	private boolean calcMore = true;
 
-	public Gen2OrbitPoints(IsomD A, IsomD B) {
+	public Gen2OrbitPoints(Isom A, Isom B) {
 		this.A = A;
 		this.B = B;
 		Am = A.getInverse();
 		Bm = B.getInverse();
 
-		masterList = new ArrayList<Point>();
-		currentList = new ArrayList<Point>();
-		currentMapList = new ArrayList<Gen2OrbitPoints.Map>();
+		masterList = new LinkedList<Point>();
+		currentList = new LinkedList<Point>();
+		currentMapList = new LinkedList<Gen2OrbitPoints.Map>();
 		currentMapList.add(Map.Null);
 
 		next = new HypPoint(0, 0);
@@ -64,8 +64,8 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 		currentIter = currentList.iterator();
 		currentIter.next();
 
-		nextList = new ArrayList<Point>();
-		nextMapList = new ArrayList<Gen2OrbitPoints.Map>();
+		nextList = new LinkedList<Point>();
+		nextMapList = new LinkedList<Gen2OrbitPoints.Map>();
 
 		hyp = new HypPoint(next);
 	}
@@ -95,8 +95,8 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 		} else {
 			masterList.addAll(nextList);
 			System.out.println("Adding " + nextList.size() + " points to the master");
-			currentList = new ArrayList<Point>(nextList);
-			currentMapList = new ArrayList<Map>(nextMapList);
+			currentList = new LinkedList<Point>(nextList);
+			currentMapList = new LinkedList<Map>(nextMapList);
 			currentIter = currentList.iterator();
 			nextList.clear();
 			nextMapList.clear();
