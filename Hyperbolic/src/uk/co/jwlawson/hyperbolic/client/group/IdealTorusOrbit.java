@@ -15,6 +15,8 @@
  */
 package uk.co.jwlawson.hyperbolic.client.group;
 
+import uk.co.jwlawson.hyperbolic.client.geometry.isometries.IsomD;
+
 /**
  * @author John
  * 

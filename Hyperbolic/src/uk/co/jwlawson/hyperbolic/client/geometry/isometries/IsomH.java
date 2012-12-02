@@ -13,17 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.jwlawson.hyperbolic.client.group;
+package uk.co.jwlawson.hyperbolic.client.geometry.isometries;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
 /**
- * @author John Lawson
+ * @author Administrator
  * 
  */
-public abstract class Isom {
+public class IsomH extends Isom {
 
-	public abstract Point map(Point p);
+	private double a, b, c, d;
 
-	public abstract Isom getInverse();
+	public IsomH(double a, double b, double c, double d) {
+		this.a = a;
+		this.b = b;
+		this.c = c;
+		this.d = d;
+	}
+
+	@Override
+	public Point map(Point p) {
+		double numX = p.getX() * a + b;
+		double numY = p.getY() * a;
+		double denX = p.getX() * c + d;
+		double denY = p.getY() * c;
+
+		return complexDivide(numX, numY, denX, denY);
+	}
+
+	@Override
+	public Isom getInverse() {
+		return new IsomH(d, -b, -c, a);
+	}
+
+	public IsomD getIsomD() {
+		return new IsomD(a + d, b - c, a - d, -b - c);
+	}
+
 }

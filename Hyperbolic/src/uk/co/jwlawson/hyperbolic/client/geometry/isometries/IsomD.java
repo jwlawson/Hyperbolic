@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.jwlawson.hyperbolic.client.group;
+package uk.co.jwlawson.hyperbolic.client.geometry.isometries;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
@@ -49,16 +49,6 @@ public class IsomD extends Isom {
 		double denY = b.getX() * z.getY() - b.getY() * z.getX() - a.getY();
 
 		return complexDivide(numX, numY, denX, denY);
-	}
-
-	private Point complexDivide(double x1, double y1, double x2, double y2) {
-		double x = x1 * x2 + y1 * y2;
-		double y = y1 * x2 - x1 * y2;
-		double div = x2 * x2 + y2 * y2;
-		x = x / div;
-		y = y / div;
-
-		return new Point(x, y);
 	}
 
 }
