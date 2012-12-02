@@ -55,4 +55,8 @@ public class IsomH extends Isom {
 		return new IsomD(a + d, b - c, a - d, -b - c);
 	}
 
+	public String toString() {
+		return "IsomH ( " + a + ", " + b + ", " + c + ", " + d + ")";
+	}
+
 }

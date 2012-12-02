@@ -51,4 +51,9 @@ public class IsomD extends Isom {
 		return complexDivide(numX, numY, denX, denY);
 	}
 
+	@Override
+	public String toString() {
+		return "IsomD a: " + a + " , b: " + b;
+	}
+
 }

@@ -106,7 +106,9 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 		}
 
 		count++;
-		System.out.println(count);
+		if (count % 100 == 0) {
+			System.out.println(count);
+		}
 		return current;
 	}
 
