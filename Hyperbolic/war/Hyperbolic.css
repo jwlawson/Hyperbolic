@@ -47,3 +47,9 @@ h1 {
 	float: right;
     overflow: hidden;
 }
+
+.slider-values {
+	display: block;
+	color: blue;
+	margin-left: 5px;
+}

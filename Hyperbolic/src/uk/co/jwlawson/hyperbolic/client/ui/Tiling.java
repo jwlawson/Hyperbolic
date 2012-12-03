@@ -15,21 +15,22 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
 import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author John
@@ -37,7 +38,6 @@ import java.util.logging.Logger;
  */
 public class Tiling implements CanvasHolder {
 
-	private static final String MOUNT_ID = "tilingcanvas";
 	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
 
 	private static final Logger log = Logger.getLogger("Tiling");
@@ -57,7 +57,7 @@ public class Tiling implements CanvasHolder {
 
 		canvas = Canvas.createIfSupported();
 		if (canvas == null) {
-			RootPanel.get(MOUNT_ID).add(new Label(upgradeMessage));
+			Window.alert(upgradeMessage);
 			return;
 		}
 
@@ -103,6 +103,10 @@ public class Tiling implements CanvasHolder {
 	}
 
 	public void initSize() {
+		Widget panel = canvas.getParent();
+		width = panel.getOffsetWidth();
+		height = width;
+
 		canvas.setWidth(width + "px");
 		canvas.setHeight(height + "px");
 		canvas.setCoordinateSpaceWidth(2 * width);
@@ -143,16 +147,11 @@ public class Tiling implements CanvasHolder {
 	}
 
 	@Override
-	public void addToPanel() {
-		RootPanel panel = RootPanel.get(MOUNT_ID);
-		width = panel.getOffsetWidth();
-		height = width;
+	public void addToPanel(Panel panel) {
+		panel.add(canvas);
 
 		initSize();
 		doUpdate();
-
-		panel.add(canvas);
-
 	}
 
 }

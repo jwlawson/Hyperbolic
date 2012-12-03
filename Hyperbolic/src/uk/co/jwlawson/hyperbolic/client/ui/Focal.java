@@ -15,6 +15,14 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
+import java.util.ArrayList;
+import java.util.logging.Logger;
+
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
+import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
+
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -31,16 +39,9 @@ import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-
-import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
-import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
-
-import java.util.ArrayList;
-import java.util.logging.Logger;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author John
@@ -50,9 +51,7 @@ public class Focal implements CanvasHolder {
 
 	private static final Logger log = Logger.getLogger(Focal.class.getName());
 
-	private static final String MOUNT_ID = "focalcanvas";
 	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
-	private static final long PROFILE_TIME = 10000;
 
 	private Canvas canvas;
 
@@ -66,20 +65,33 @@ public class Focal implements CanvasHolder {
 	private int height = 400;
 	private int width = 400;
 
+	private double a = 1 / Math.sqrt(2);
+	private double b = 1 / Math.sqrt(2);
+
 	private CssColor redrawColor = CssColor.make("rgb(255,255,255)");
 	private Context2d context;
+
+	private boolean restart = false;
 
 	public Focal() {
 		canvas = Canvas.createIfSupported();
 		if (canvas == null) {
-			RootPanel.get(MOUNT_ID).add(new Label(upgradeMessage));
+			Window.alert(upgradeMessage);
 			return;
 		}
 		context = canvas.getContext2d();
+	}
 
+	public void setParams(double a, double b) {
+		this.a = a;
+		this.b = b;
+
+		initPoints();
 	}
 
 	private void initPoints() {
+		restart = true;
+		clearCanvas();
 		log.info("Loading points");
 		mPointList = new ArrayList<Point>();
 		mLineList = new ArrayList<Line>();
@@ -91,9 +103,10 @@ public class Focal implements CanvasHolder {
 		// ----------------------
 		// final EuclLine.Factory factory = new Factory(width, height);
 		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		final IdealTorusOrbit orbit = new IdealTorusOrbit(1 / Math.sqrt(2), 1 / Math.sqrt(2));
+		final IdealTorusOrbit orbit = new IdealTorusOrbit(a, b);
 
 		mPointList.add(orbit.next());
+		restart = false;
 
 		Scheduler.get().scheduleIncremental(new RepeatingCommand() {
 
@@ -116,14 +129,12 @@ public class Focal implements CanvasHolder {
 					computeFinished();
 				}
 
-				return orbit.hasNext();
+				return orbit.hasNext() && !restart;
 			}
 
 			private void computeFinished() {
 				System.out.println("Compute done!");
-				redrawColor = CssColor.make("#ffffff");
 				doUpdate();
-
 			}
 		});
 
@@ -132,19 +143,23 @@ public class Focal implements CanvasHolder {
 	}
 
 	public void initSize() {
+		Widget panel = canvas.getParent();
+		width = panel.getOffsetWidth();
+		height = width;
+
 		canvas.setWidth(width + "px");
 		canvas.setHeight(height + "px");
 		canvas.setCoordinateSpaceWidth(2 * width);
 		canvas.setCoordinateSpaceHeight(2 * height);
 
 		initPoints();
+		doUpdate();
 	}
 
 	@Override
 	public void doUpdate() {
 
-		context.setFillStyle(redrawColor);
-		context.fillRect(0, 0, 2 * width, 2 * height);
+		clearCanvas();
 
 		context.save();
 		context.translate(width, height);
@@ -166,6 +181,11 @@ public class Focal implements CanvasHolder {
 		context.restore();
 		System.out.println("Update done");
 
+	}
+
+	private void clearCanvas() {
+		context.setFillStyle(redrawColor);
+		context.fillRect(0, 0, 2 * width, 2 * height);
 	}
 
 	@Override
@@ -217,15 +237,10 @@ public class Focal implements CanvasHolder {
 	}
 
 	@Override
-	public void addToPanel() {
-		RootPanel panel = RootPanel.get(MOUNT_ID);
-		width = panel.getOffsetWidth();
-		height = width;
+	public void addToPanel(Panel panel) {
+		panel.add(canvas);
 
 		initSize();
-		doUpdate();
-
-		panel.add(canvas);
 	}
 
 }
