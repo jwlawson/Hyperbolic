@@ -41,7 +41,7 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 	private static final String SLIDER_ID = "options";
 	private static final String SLIDER_VALUE_STYLE = "slider-values";
 	private static final String A_LABEL = "a = sqrt(2) + ";
-	private static final String B_LABEL = "b = sqrt(2) + ";
+	private static final String B_LABEL = "t = ";
 
 	private static final Logger log = Logger.getLogger("Hyperbolic");
 
@@ -66,7 +66,7 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 		bValue = new Label(B_LABEL + "0");
 		bValue.addStyleName(SLIDER_VALUE_STYLE);
-		bSlider = new Slider("b", -69, 100, 0);
+		bSlider = new Slider("b", -200, 0, -100);
 		bSlider.addListener(this);
 
 		RootPanel.get(SLIDER_ID).add(bValue);
@@ -126,8 +126,8 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 		@Override
 		public void run() {
-			mFocal.setParams(1 / Math.sqrt(2) + ((double) aSlider.getValueAtIndex(0) / 100), 1
-					/ Math.sqrt(2) + ((double) bSlider.getValueAtIndex(0) / 100));
+			mFocal.setParams(1 / Math.sqrt(2) + ((double) aSlider.getValueAtIndex(0) / 100),
+					((double) bSlider.getValueAtIndex(0) / 100));
 		}
 	};
 

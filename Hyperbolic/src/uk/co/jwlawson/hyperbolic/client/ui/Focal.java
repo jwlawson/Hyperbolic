@@ -66,7 +66,7 @@ public class Focal implements CanvasHolder {
 	private int width = 400;
 
 	private double a = 1 / Math.sqrt(2);
-	private double b = 1 / Math.sqrt(2);
+	private double b = -1;
 
 	private CssColor redrawColor = CssColor.make("rgb(255,255,255)");
 	private Context2d context;
