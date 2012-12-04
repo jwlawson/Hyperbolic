@@ -28,9 +28,9 @@ public abstract class Isom {
 	public abstract Isom getInverse();
 
 	public static Point complexDivide(double x1, double y1, double x2, double y2) {
-		double x = x1 * x2 + y1 * y2;
-		double y = y1 * x2 - x1 * y2;
-		double div = x2 * x2 + y2 * y2;
+		double x = (x1 * x2) + (y1 * y2);
+		double y = (y1 * x2) - (x1 * y2);
+		double div = (x2 * x2) + (y2 * y2);
 		x = x / div;
 		y = y / div;
 

@@ -42,11 +42,11 @@ public class IsomD extends Isom {
 
 	@Override
 	public Point map(Point z) {
-		double numX = a.getX() * z.getX() - a.getY() * z.getY() + b.getX();
-		double numY = a.getX() * z.getY() + a.getY() * z.getX() + b.getY();
+		double numX = (a.getX() * z.getX()) - (a.getY() * z.getY()) + b.getX();
+		double numY = (a.getX() * z.getY()) + (a.getY() * z.getX()) + b.getY();
 
-		double denX = b.getX() * z.getX() + b.getY() * z.getY() + a.getX();
-		double denY = b.getX() * z.getY() - b.getY() * z.getX() - a.getY();
+		double denX = (b.getX() * z.getX()) + (b.getY() * z.getY()) + a.getX();
+		double denY = (b.getX() * z.getY()) - (b.getY() * z.getX()) - a.getY();
 
 		return complexDivide(numX, numY, denX, denY);
 	}
