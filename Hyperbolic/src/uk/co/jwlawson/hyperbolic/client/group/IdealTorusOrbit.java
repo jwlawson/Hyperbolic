@@ -29,7 +29,7 @@ public class IdealTorusOrbit extends Gen2OrbitPoints {
 	}
 
 	private static IsomD getIsomA(double a, double t) {
-		double b = Math.sqrt(1 / (t * t + 1));
+		double b = Math.sqrt(-(a * a) / t);
 
 		IsomD result = IsomH.getIsomD(a, -a * t, a, (1 - (a * a * t)) / a);
 
@@ -39,7 +39,7 @@ public class IdealTorusOrbit extends Gen2OrbitPoints {
 	}
 
 	private static IsomD getIsomB(double a, double t) {
-		double b = Math.sqrt(1 / (t * t + 1));
+		double b = Math.sqrt(-(a * a) / t);
 
 		IsomD result = IsomH.getIsomD(b * t, -b * t, b, (1 - b * b * t) / (b * t));
 		System.out.println("IsomD B found: " + result);
