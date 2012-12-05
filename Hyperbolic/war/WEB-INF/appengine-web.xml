@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
   <application>focal-decomp</application>
-  <version>hyp</version>
+  <version>hypt</version>
 
   <!--
     Allows App Engine to send multiple requests to one instance in parallel:
