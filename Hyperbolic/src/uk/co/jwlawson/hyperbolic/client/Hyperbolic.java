@@ -64,7 +64,7 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 		RootPanel.get(SLIDER_ID).add(aValue);
 		RootPanel.get(SLIDER_ID).add(aSlider);
 
-		bValue = new Label(B_LABEL + "0");
+		bValue = new Label(B_LABEL + "-1");
 		bValue.addStyleName(SLIDER_VALUE_STYLE);
 		bSlider = new Slider("b", -200, 0, -100);
 		bSlider.addListener(this);
