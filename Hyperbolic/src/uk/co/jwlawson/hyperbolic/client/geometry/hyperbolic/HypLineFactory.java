@@ -138,4 +138,28 @@ public class HypLineFactory implements LineFactory {
 		a = a / (2 * x1);
 		return a;
 	}
+
+	@Override
+	public Line getSegmentJoining(Point p1, Point p2) {
+		Point centre = findCentre(p1, p2);
+		builder.setCentre(centre);
+		builder.calcRadius();
+
+		double a1 = findAngleBetweenPoints(p1, centre);
+		double a2 = findAngleBetweenPoints(p2, centre);
+		builder.setAngles(a1, a2);
+
+		return builder.build();
+	}
+
+	private double findAngleBetweenPoints(Point p1, Point p2) {
+		double dx = p1.getX() - p2.getX();
+		double dy = p1.getY() - p2.getY();
+
+		double theta = Math.atan2(dy, dx);
+		if (theta < 0) {
+			theta += Math.PI * 2;
+		}
+		return theta;
+	}
 }

@@ -25,4 +25,5 @@ public interface LineFactory {
 
 	public Line getGeodesicThrough(Point p1, Point p2);
 
+	public Line getSegmentJoining(Point p1, Point p2);
 }
