@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLine.Factory;
 
 /**
  * @author John
@@ -31,16 +30,16 @@ import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLine.Factory;
  */
 public class EuclLineFactoryTest {
 
-	private EuclLine.Factory factory;
+	private EuclLineFactory factory;
 
 	@Before
 	public void setup() {
-		factory = new Factory(400, 400);
+		factory = new EuclLineFactory(400, 400);
 	}
 
 	/**
 	 * Test method for
-	 * {@link uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLine.Factory#getPerpendicularBisector(uk.co.jwlawson.hyperbolic.client.geometry.Point, uk.co.jwlawson.hyperbolic.client.geometry.Point)}
+	 * {@link uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLineFactory#getPerpendicularBisector(uk.co.jwlawson.hyperbolic.client.geometry.Point, uk.co.jwlawson.hyperbolic.client.geometry.Point)}
 	 * .
 	 */
 	@Test
@@ -84,7 +83,7 @@ public class EuclLineFactoryTest {
 
 	/**
 	 * Test method for
-	 * {@link uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLine.Factory#getGeodesicThrough(uk.co.jwlawson.hyperbolic.client.geometry.Point, uk.co.jwlawson.hyperbolic.client.geometry.Point)}
+	 * {@link uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLineFactory#getGeodesicThrough(uk.co.jwlawson.hyperbolic.client.geometry.Point, uk.co.jwlawson.hyperbolic.client.geometry.Point)}
 	 * .
 	 */
 	@Test

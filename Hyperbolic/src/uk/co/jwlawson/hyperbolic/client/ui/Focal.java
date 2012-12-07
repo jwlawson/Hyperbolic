@@ -99,7 +99,7 @@ public class Focal implements CanvasHolder {
 		final HypLineFactory factory = new HypLineFactory(width / 2);
 		// final HypOrbitPoints orbit = new HypOrbitPoints();
 		// ----------------------
-		// final EuclLine.Factory factory = new Factory(width, height);
+		// final EuclLine.Factory factory = new EuclLineFactory(width, height);
 		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
 		final IdealTorusOrbit orbit = new IdealTorusOrbit(t);
 
