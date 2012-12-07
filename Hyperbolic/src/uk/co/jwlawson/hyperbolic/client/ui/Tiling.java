@@ -15,14 +15,6 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
-import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
-import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
-
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -31,6 +23,14 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
+import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
+
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * @author John
@@ -52,6 +52,8 @@ public class Tiling implements CanvasHolder {
 	private int width = 400;
 	private final CssColor redrawColor = CssColor.make("rgb(255,255,255)");
 
+	private double t = -1;
+
 	public Tiling() {
 		mLineList = new ArrayList<Line>();
 
@@ -64,6 +66,12 @@ public class Tiling implements CanvasHolder {
 		context = canvas.getContext2d();
 	}
 
+	public void setT(double t) {
+		this.t = t;
+
+		initPoints();
+	}
+
 	private void initPoints() {
 		mPointList = new ArrayList<Point>();
 
@@ -74,7 +82,7 @@ public class Tiling implements CanvasHolder {
 		// ----------------------
 		// final EuclLine.Factory factory = new Factory(width, height);
 		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		final IdealTorusOrbit orbit = new IdealTorusOrbit(1 / Math.sqrt(2), -1);
+		final IdealTorusOrbit orbit = new IdealTorusOrbit(t);
 
 		while (orbit.hasNext()) {
 			mPointList.add(orbit.next());

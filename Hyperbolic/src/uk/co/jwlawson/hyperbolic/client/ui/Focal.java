@@ -15,14 +15,6 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
-import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
-import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
-
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -42,6 +34,14 @@ import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
+import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
+
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * @author John
@@ -65,8 +65,7 @@ public class Focal implements CanvasHolder {
 	private int height = 400;
 	private int width = 400;
 
-	private double a = 1 / Math.sqrt(2);
-	private double b = -1;
+	private double t = -1;
 
 	private CssColor redrawColor = CssColor.make("rgb(255,255,255)");
 	private Context2d context;
@@ -82,9 +81,8 @@ public class Focal implements CanvasHolder {
 		context = canvas.getContext2d();
 	}
 
-	public void setParams(double a, double b) {
-		this.a = a;
-		this.b = b;
+	public void setT(double t) {
+		this.t = t;
 
 		initPoints();
 	}
@@ -103,7 +101,7 @@ public class Focal implements CanvasHolder {
 		// ----------------------
 		// final EuclLine.Factory factory = new Factory(width, height);
 		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		final IdealTorusOrbit orbit = new IdealTorusOrbit(a, b);
+		final IdealTorusOrbit orbit = new IdealTorusOrbit(t);
 
 		mPointList.add(orbit.next());
 		restart = false;
