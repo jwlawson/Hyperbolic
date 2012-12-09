@@ -120,7 +120,7 @@ public class Tiling implements CanvasHolder {
 
 	private void pointsComputed() {
 		final HypLineFactory factory = new HypLineFactory(width / 2);
-		Voronoi vor = new Voronoi(0.000001);
+		Voronoi vor = new Voronoi(0.000000001);
 
 		double[] xValues = getXValues();
 		double[] yValues = getYValues();

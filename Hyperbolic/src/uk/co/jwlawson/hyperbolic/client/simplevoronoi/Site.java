@@ -24,18 +24,24 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 The views and conclusions contained in the software and documentation are those of the
 authors and should not be interpreted as representing official policies, either expressed
 or implied, of James Humphreys.
+
+Modified by John Lawson 2012
  */
 
 package uk.co.jwlawson.hyperbolic.client.simplevoronoi;
 
 // used both for sites and for vertices
-public class Site
-{
-    Point coord;
-    int sitenbr;
+public class Site {
+	Point coord;
+	int sitenbr;
 
-    public Site()
-    {
-        coord = new Point();
-    }
+	public Site() {
+		coord = new Point();
+	}
+
+	public Site(double x, double y) {
+		coord = new Point();
+		coord.x = x;
+		coord.y = y;
+	}
 }

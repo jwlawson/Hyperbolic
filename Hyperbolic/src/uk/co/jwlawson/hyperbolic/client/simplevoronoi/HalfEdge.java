@@ -29,17 +29,17 @@ or implied, of James Humphreys.
 package uk.co.jwlawson.hyperbolic.client.simplevoronoi;
 
 
-public class Halfedge
+public class HalfEdge
 {
-    Halfedge ELleft, ELright;
+    HalfEdge halfEdgeToLeft, halfEdgeToRight;
     Edge ELedge;
     boolean deleted;
     int ELpm;
     Site vertex;
     double ystar;
-    Halfedge PQnext;
+    HalfEdge PQnext;
 
-    public Halfedge()
+    public HalfEdge()
     {
         PQnext = null;
     }
