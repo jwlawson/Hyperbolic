@@ -22,12 +22,14 @@ package uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic;
 public class Util {
 
 	public static HypPoint convertKleinToPoincare(HypPoint point) {
-		double scale = (1 - Math.sqrt(1 - point.magnitude())) / point.magnitude();
+		double scale = (1 - Math.sqrt(1 - point.euclMag())) / point.euclMag();
 
 		double x = scale * point.getX();
 		double y = scale * point.getY();
 
-		return new HypPoint(x, y);
+		HypPoint result = new HypPoint(x, y);
+
+		return result;
 	}
 
 }

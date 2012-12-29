@@ -115,6 +115,10 @@ public class HypLineFactory implements LineFactory {
 		return builder.build();
 	}
 
+	private boolean isDiameter(Point p1, Point p2) {
+		return p1.getX() * p2.getY() == p1.getY() * p2.getX();
+	}
+
 	private Point findCentre(Point p1, Point p2) {
 		return findCentre(p1.getX(), p1.getY(), p2.getX(), p2.getY());
 	}
@@ -142,6 +146,10 @@ public class HypLineFactory implements LineFactory {
 	@Override
 	public Line getSegmentJoining(Point p1, Point p2) {
 		Point centre = findCentre(p1, p2);
+		if (isDiameter(p1, p2)) {
+			System.out.println("Centre diam: " + centre);
+		}
+
 		builder.setCentre(centre);
 		builder.calcRadius();
 
