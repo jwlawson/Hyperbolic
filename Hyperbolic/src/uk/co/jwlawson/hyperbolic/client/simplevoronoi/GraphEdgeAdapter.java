@@ -50,6 +50,10 @@ public class GraphEdgeAdapter {
 
 		if (p1.magnitude() >= 0.99999999 && p2.magnitude() >= 0.99999999) {
 			// TODO Edge outside disk.
+			edge.x1 = Double.NaN;
+			edge.y1 = Double.NaN;
+			edge.x2 = Double.NaN;
+			edge.y2 = Double.NaN;
 			return;
 		}
 
