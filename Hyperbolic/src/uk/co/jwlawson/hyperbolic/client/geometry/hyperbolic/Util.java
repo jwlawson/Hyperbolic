@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.jwlawson.hyperbolic.client.simplevoronoi;
-
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
+package uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic;
 
 /**
  * @author John
  * 
  */
-public class GraphEdgeAdapter {
+public class Util {
 
-	private GraphEdge edge;
+	public static HypPoint convertKleinToPoincare(HypPoint point) {
+		double scale = (1 - Math.sqrt(1 - point.magnitude())) / point.magnitude();
 
-	public GraphEdgeAdapter(GraphEdge edge) {
-		this.edge = edge;
-	}
+		double x = scale * point.getX();
+		double y = scale * point.getY();
 
-	public HypPoint getStart() {
-		return new HypPoint(edge.x1, edge.y1);
-	}
-
-	public HypPoint getEnd() {
-		return new HypPoint(edge.x2, edge.y2);
+		return new HypPoint(x, y);
 	}
 
 }

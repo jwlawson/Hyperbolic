@@ -28,6 +28,7 @@ import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.Util;
 import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
 import uk.co.jwlawson.hyperbolic.client.simplevoronoi.GraphEdge;
 import uk.co.jwlawson.hyperbolic.client.simplevoronoi.GraphEdgeAdapter;
@@ -135,7 +136,8 @@ public class Tiling implements CanvasHolder {
 			public boolean execute() {
 
 				GraphEdgeAdapter edge = new GraphEdgeAdapter(iter.next());
-				Line line = factory.getSegmentJoining(edge.getStart(), edge.getEnd());
+				Line line = factory.getSegmentJoining(Util.convertKleinToPoincare(edge.getStart()),
+						Util.convertKleinToPoincare(edge.getEnd()));
 				mLineList.add(line);
 
 				drawDrawables(line);
