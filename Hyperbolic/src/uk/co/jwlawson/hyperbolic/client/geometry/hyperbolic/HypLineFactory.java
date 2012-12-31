@@ -43,15 +43,7 @@ public class HypLineFactory implements LineFactory {
 			throw new IllegalArgumentException("Points cannot be equal: " + p1 + " , " + p2);
 		}
 
-		if (p2.equals(new Point(0, 0))) {
-			return getPerpendicularBisector(p2, p1);
-		}
-
-		Point mapped = findMappedPoint(p1, p2);
-
-		Point centreMapped = findCentreForPerpBisectorWithOrigin(mapped);
-
-		Point centre = inverseCentre(p1, centreMapped);
+		Point centre = findPerpBisectorCentre(p1, p2);
 
 		builder.setCentre(centre);
 		builder.calcRadius();
@@ -60,48 +52,19 @@ public class HypLineFactory implements LineFactory {
 		return builder.build();
 	}
 
-	/** Mobius map that takes p1 to zero. Returns the image of p2 */
-	private Point findMappedPoint(Point p1, Point p2) {
-		double numX = p2.getX() - p1.getX();
-		double numY = p2.getY() - p1.getY();
-		double denX = 1 - p1.getX() * p2.getX() - p1.getY() * p2.getY();
-		double denY = p2.getX() * p1.getY() - p1.getX() * p2.getY();
-		Point mapped = complexDivide(numX, numY, denX, denY);
-		return mapped;
+	private Point findPerpBisectorCentre(Point p1, Point p2) {
+		return findPerpBisectorCentre(p1.getX(), p1.getY(), p2.getX(), p2.getY());
 	}
 
-	/** Inverse map taking 0 to p1. Returns the image of centreMapped */
-	private Point inverseCentre(Point p1, Point centreMapped) {
-		double numX = centreMapped.getX() + p1.getX();
-		double numY = centreMapped.getY() + p1.getY();
-		double denX = 1 + centreMapped.getX() * p1.getX() + centreMapped.getY() * p1.getY();
-		double denY = p1.getX() * centreMapped.getY() - p1.getY() * centreMapped.getX();
-		Point centre = complexDivide(numX, numY, denX, denY);
-		return centre;
-	}
+	private Point findPerpBisectorCentre(double x1, double y1, double x2, double y2) {
+		double a = -x1 + (x1 * x2 * x2) + (x1 * y2 * y2) + x2 - (x1 * x1 * x2) - (x2 * y1 * y1);
+		double b = -y1 + (x2 * x2 * y1) + (y1 * y2 * y2) + y2 - (x1 * x1 * y2) - (y1 * y1 * y2);
+		double div = (x1 * x1) + (y1 * y1) - (x2 * x2) - (y2 * y2);
 
-	private Point findCentreForPerpBisectorWithOrigin(Point p) {
-		HypPoint hyp = new HypPoint(p);
-		double rho = hyp.euclMag();
-		double hypDist = hyp.magnitude();
-		hypDist = hypDist / 2;
-		double dz = (Math.pow(Math.E, hypDist) - 1) / (Math.pow(Math.E, hypDist) + 1);
-		double modifier = (dz * dz + 1) / (2 * dz * rho);
+		a = a / div;
+		b = b / div;
 
-		double x = p.getX() * modifier;
-		double y = p.getY() * modifier;
-
-		return new Point(x, y);
-	}
-
-	private Point complexDivide(double x1, double y1, double x2, double y2) {
-		double x = x1 * x2 + y1 * y2;
-		double y = y1 * x2 - x1 * y2;
-		double div = x2 * x2 + y2 * y2;
-		x = x / div;
-		y = y / div;
-
-		return new Point(x, y);
+		return new Point(a, b);
 	}
 
 	@Override
