@@ -57,8 +57,8 @@ public class HypLineFactory implements LineFactory {
 	}
 
 	private Point findPerpBisectorCentre(double x1, double y1, double x2, double y2) {
-		double a = -x1 + (x1 * x2 * x2) + (x1 * y2 * y2) + x2 - (x1 * x1 * x2) - (x2 * y1 * y1);
-		double b = -y1 + (x2 * x2 * y1) + (y1 * y2 * y2) + y2 - (x1 * x1 * y2) - (y1 * y1 * y2);
+		double a = x1 - (x1 * x2 * x2) - (x1 * y2 * y2) - x2 + (x1 * x1 * x2) + (x2 * y1 * y1);
+		double b = y1 - (x2 * x2 * y1) - (y1 * y2 * y2) - y2 + (x1 * x1 * y2) + (y1 * y1 * y2);
 		double div = (x1 * x1) + (y1 * y1) - (x2 * x2) - (y2 * y2);
 
 		a = a / div;
