@@ -37,10 +37,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
 import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -55,8 +57,8 @@ public class Focal implements CanvasHolder {
 
 	private Canvas canvas;
 
-	private ArrayList<Point> mPointList;
-	private ArrayList<Line> mLineList;
+	private List<Point> mPointList;
+	private List<Line> mLineList;
 
 	// mouse positions relative to canvas
 	private int mouseX, mouseY;
@@ -65,7 +67,7 @@ public class Focal implements CanvasHolder {
 	private int height = 400;
 	private int width = 400;
 
-	private double t = -1;
+	private double y = 1;
 
 	private CssColor redrawColor = CssColor.make("rgb(255,255,255)");
 	private Context2d context;
@@ -81,8 +83,8 @@ public class Focal implements CanvasHolder {
 		context = canvas.getContext2d();
 	}
 
-	public void setT(double t) {
-		this.t = t;
+	public void setY(double y) {
+		this.y = y;
 
 		initPoints();
 	}
@@ -93,7 +95,7 @@ public class Focal implements CanvasHolder {
 		log.info("Loading points");
 		mPointList = new ArrayList<Point>();
 		mLineList = new ArrayList<Line>();
-		final Point origin = new Point(0, 0);
+		final Point origin = new Point((y - 1) / (y + 1), 0);
 
 		// Change this bit!
 		final HypLineFactory factory = new HypLineFactory(width / 2);
@@ -101,9 +103,13 @@ public class Focal implements CanvasHolder {
 		// ----------------------
 		// final EuclLine.Factory factory = new EuclLineFactory(width, height);
 		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		final IdealTorusOrbit orbit = new IdealTorusOrbit(t);
+		final IdealTorusOrbit orbit = new IdealTorusOrbit(y);
+		orbit.setStart(origin);
 
-		mPointList.add(orbit.next());
+		Point p = orbit.next();
+		System.out.println("Origin: " + origin + " first: " + p);
+		p.scale(width / 2);
+		mPointList.add(new EuclPoint(p));
 		restart = false;
 
 		Scheduler.get().scheduleIncremental(new RepeatingCommand() {

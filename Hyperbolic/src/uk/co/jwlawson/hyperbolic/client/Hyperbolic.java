@@ -40,7 +40,7 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 	private static final String FOCAL_MOUNT_ID = "focalcanvas";
 	private static final String SLIDER_ID = "options";
 	private static final String SLIDER_VALUE_STYLE = "slider-values";
-	private static final String T_LABEL = "t = ";
+	private static final String T_LABEL = "y = ";
 
 	private static final Logger log = Logger.getLogger("Hyperbolic");
 
@@ -54,9 +54,9 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 	@Override
 	public void onModuleLoad() {
 
-		bValue = new Label(T_LABEL + "-1");
+		bValue = new Label(T_LABEL + "1");
 		bValue.addStyleName(SLIDER_VALUE_STYLE);
-		bSlider = new Slider("t", -500, 0, -100);
+		bSlider = new Slider("t", 1, 500, 100);
 		bSlider.addListener(this);
 
 		RootPanel.get(SLIDER_ID).add(bValue);
@@ -111,7 +111,7 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 		@Override
 		public void run() {
-			mFocal.setT((double) bSlider.getValueAtIndex(0) / 100);
+			mFocal.setY((double) bSlider.getValueAtIndex(0) / 100);
 		}
 	};
 

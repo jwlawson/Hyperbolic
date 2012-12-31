@@ -15,13 +15,13 @@
  */
 package uk.co.jwlawson.hyperbolic.client.group;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.isometries.Isom;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author John
@@ -43,6 +43,7 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 	private int count = 0;
 	private int index = 0;
 
+	private Point start = new Point(0, 0);
 	private Point current, next;
 	private HypPoint hyp;
 
@@ -59,7 +60,7 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 		currentMapList = new LinkedList<Gen2OrbitPoints.Map>();
 		currentMapList.add(Map.Null);
 
-		next = new HypPoint(0, 0);
+		next = start;
 		currentList.add(next);
 
 		currentIter = currentList.iterator();
@@ -69,6 +70,11 @@ public class Gen2OrbitPoints implements Iterator<Point> {
 		nextMapList = new LinkedList<Gen2OrbitPoints.Map>();
 
 		hyp = new HypPoint(next);
+	}
+
+	public void setStart(Point start) {
+		this.start = start;
+		next = start;
 	}
 
 	@Override

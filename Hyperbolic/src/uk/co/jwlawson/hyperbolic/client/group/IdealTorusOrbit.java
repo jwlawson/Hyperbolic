@@ -24,12 +24,13 @@ import uk.co.jwlawson.hyperbolic.client.geometry.isometries.IsomH;
  */
 public class IdealTorusOrbit extends Gen2OrbitPoints {
 
-	public IdealTorusOrbit(double t) {
-		super(getIsomA(t), getIsomB(t));
+	public IdealTorusOrbit(double y) {
+		super(getIsomA(y), getIsomB(y));
 	}
 
-	private static IsomD getIsomA(double t) {
-		double a = Math.sqrt(-1 / (t - 1));
+	private static IsomD getIsomA(double y) {
+		double t = -y * y;
+		double a = Math.sqrt(1 / (1 - t));
 
 		IsomD result = IsomH.getIsomD(a, -a * t, a, (1 - (a * a * t)) / a);
 
@@ -38,7 +39,8 @@ public class IdealTorusOrbit extends Gen2OrbitPoints {
 		return result;
 	}
 
-	private static IsomD getIsomB(double t) {
+	private static IsomD getIsomB(double y) {
+		double t = -y * y;
 		double b = Math.sqrt(1 / (t * (t - 1)));
 
 		IsomD result = IsomH.getIsomD(b * t, -b * t, b, (1 - b * b * t) / (b * t));
