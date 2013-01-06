@@ -33,7 +33,7 @@ package uk.co.jwlawson.hyperbolic.client.simplevoronoi;
 // used both for sites and for vertices
 public class Site {
 	Point coord;
-	int sitenbr;
+	int siteNumber;
 
 	public Site() {
 		coord = new Point();

@@ -62,9 +62,8 @@ public class GraphEdgeAdapter {
 
 		double pm = 0.99999999 + m * m - c * c;
 		if (pm < 0) {
-			System.out.println("NaN! m = " + m + " c = " + c + " pm^2 = "
-					+ (0.99999999 + m * m - c * c));
-			// return;
+//			System.out.println("NaN! m = " + m + " c = " + c + " pm^2 = "
+//					+ (0.99999999 + m * m - c * c));
 		}
 		pm = Math.sqrt(pm);
 
@@ -90,26 +89,26 @@ public class GraphEdgeAdapter {
 			if (p1.distance(ideal1) > p1.distance(ideal2)) {
 				edge.x1 = x2;
 				edge.y1 = y2;
-				System.out.println("Replacing " + p1 + "with " + ideal2 + " not " + ideal1
-						+ " where p2 = " + p2);
+//				System.out.println("Replacing " + p1 + "with " + ideal2 + " not " + ideal1
+//						+ " where p2 = " + p2);
 			} else {
 				edge.x1 = x1;
 				edge.y1 = y1;
-				System.out.println("Replacing " + p1 + "with " + ideal1 + " not " + ideal2
-						+ " where p2 = " + p2);
+//				System.out.println("Replacing " + p1 + "with " + ideal1 + " not " + ideal2
+//						+ " where p2 = " + p2);
 			}
 		}
 		if (p2.magnitude() >= 1) {
 			if (p2.distance(ideal1) < p2.distance(ideal2)) {
 				edge.x2 = x1;
 				edge.y2 = y1;
-				System.out.println("Replacing p2=" + p2 + "with " + ideal1 + " not " + ideal2
-						+ " where p1 = " + p1);
+//				System.out.println("Replacing p2=" + p2 + "with " + ideal1 + " not " + ideal2
+//						+ " where p1 = " + p1);
 			} else {
 				edge.x2 = x2;
 				edge.y2 = y2;
-				System.out.println("Replacing p2=" + p2 + "with " + ideal2 + " not " + ideal1
-						+ " where p1 = " + p1);
+//				System.out.println("Replacing p2=" + p2 + "with " + ideal2 + " not " + ideal1
+//						+ " where p1 = " + p1);
 			}
 		}
 

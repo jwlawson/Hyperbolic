@@ -35,12 +35,12 @@ package uk.co.jwlawson.hyperbolic.client.simplevoronoi;
  */
 class Edge {
 	public double a = 0, b = 0, c = 0;
-	Site[] ep;  // JH: End points?
-	Site[] reg; // JH: Sites this edge bisects?
-	int edgenbr;
+	Site[] endPoints;  // JH: End points?
+	Site[] sitesGeneratingThis; // JH: Sites this edge bisects?
+	int edgeNumber;
 
 	Edge() {
-		ep = new Site[2];
-		reg = new Site[2];
+		endPoints = new Site[2];
+		sitesGeneratingThis = new Site[2];
 	}
 }
