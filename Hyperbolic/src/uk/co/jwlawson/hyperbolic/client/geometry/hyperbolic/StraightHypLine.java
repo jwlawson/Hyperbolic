@@ -44,51 +44,6 @@ public class StraightHypLine extends HypLine {
 		return line.contains(p);
 	}
 
-	public static class SegementBuilder {
-		private EuclLineFactory factory;
-		private double scale;
-
-		private Point start;
-		private Point end;
-
-		public SegementBuilder() {
-			factory = new EuclLineFactory(10000, 10000);
-		}
-
-		public SegementBuilder setScale(double scale) {
-			this.scale = scale;
-
-			return this;
-		}
-
-		public SegementBuilder setPoints(Point start, Point end) {
-
-			try {
-				HypPoint p1 = new HypPoint(start);
-				HypPoint p2 = new HypPoint(end);
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("Points must lie within the unit disk");
-			}
-
-			this.start = start;
-			this.end = end;
-
-			return this;
-		}
-
-		public StraightHypLine build() {
-			if (start == null || end == null) {
-				throw new IllegalArgumentException("Ensure all attributes of the line are set");
-			}
-			Point scaledStart = new Point(start);
-			Point scaledEnd = new Point(end);
-			scaledStart.scale(scale);
-			scaledEnd.scale(scale);
-			EuclLine line = (EuclLine) factory.getSegmentJoining(scaledStart, scaledEnd);
-			return new StraightHypLine(line);
-		}
-	}
-
 	public static class DiamBuilder {
 
 		private EuclLineFactory factory;
@@ -117,6 +72,21 @@ public class StraightHypLine extends HypLine {
 
 		public DiamBuilder setScale(double scale) {
 			this.scale = scale;
+
+			return this;
+		}
+
+		public DiamBuilder setPoints(Point start, Point end) {
+
+			try {
+				HypPoint p1 = new HypPoint(start);
+				HypPoint p2 = new HypPoint(end);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("Points must lie within the unit disk");
+			}
+
+			this.start = start;
+			this.end = end;
 
 			return this;
 		}

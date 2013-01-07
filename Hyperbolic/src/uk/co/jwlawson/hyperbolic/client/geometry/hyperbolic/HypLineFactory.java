@@ -30,18 +30,15 @@ public class HypLineFactory implements LineFactory {
 
 	private static final Logger log = Logger.getLogger("HypLineFactory");
 	private CircleHypLine.Builder circBuilder;
-	private StraightHypLine.DiamBuilder strDiamBuilder;
-	private StraightHypLine.SegementBuilder strSegBuilder;
+	private StraightHypLine.DiamBuilder strBuilder;
 
 	public HypLineFactory(double scale) {
 		circBuilder = new CircleHypLine.Builder();
 		circBuilder.setScale(scale);
 
-		strDiamBuilder = new StraightHypLine.DiamBuilder();
-		strDiamBuilder.setScale(scale);
+		strBuilder = new StraightHypLine.DiamBuilder();
+		strBuilder.setScale(scale);
 
-		strSegBuilder = new StraightHypLine.SegementBuilder();
-		strSegBuilder.setScale(scale);
 	}
 
 	@Override
@@ -52,8 +49,8 @@ public class HypLineFactory implements LineFactory {
 		}
 
 		if (isBisectorDiameter(p1, p2)) {
-			strDiamBuilder.setPoint(p1);
-			return strDiamBuilder.build();
+			strBuilder.setPoint(p1);
+			return strBuilder.build();
 		}
 
 		Point centre = findPerpBisectorCentre(p1, p2);
@@ -90,8 +87,8 @@ public class HypLineFactory implements LineFactory {
 	public Line getGeodesicThrough(Point p1, Point p2) {
 
 		if (isDiameter(p1, p2)) {
-			strDiamBuilder.setPoint(p1);
-			return strDiamBuilder.build();
+			strBuilder.setPoint(p1);
+			return strBuilder.build();
 		}
 		Point centre = findCentre(p1, p2);
 
@@ -134,8 +131,8 @@ public class HypLineFactory implements LineFactory {
 	public Line getSegmentJoining(Point p1, Point p2) {
 		Point centre = findCentre(p1, p2);
 		if (isDiameter(p1, p2)) {
-			strSegBuilder.setPoints(p1, p2);
-			return strSegBuilder.build();
+			strBuilder.setPoints(p1, p2);
+			return strBuilder.build();
 		}
 
 		circBuilder.setCentre(centre);
