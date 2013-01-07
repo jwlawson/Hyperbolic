@@ -39,7 +39,7 @@ public class EuclLine extends Line {
 	@Override
 	public void draw(Context2d context) {
 		context.setLineWidth(0.5);
-		context.setStrokeStyle("rgba(0,0,0,0.8)");
+		context.setStrokeStyle("rgb(0,0,0)");
 		context.beginPath();
 		context.moveTo(startX, startY);
 		context.lineTo(endX, endY);

@@ -23,11 +23,11 @@ import org.junit.Test;
  * @author John
  * 
  */
-public class HypLineTest {
+public class CircleHypLineTest {
 
 	/**
 	 * Test method for
-	 * {@link uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLine#contains(uk.co.jwlawson.hyperbolic.client.geometry.Point)}
+	 * {@link uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.CircleHypLine#contains(uk.co.jwlawson.hyperbolic.client.geometry.Point)}
 	 * .
 	 */
 	@Test

@@ -18,7 +18,7 @@ package uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLine.Builder;
+import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclPoint;
 
 import java.util.logging.Logger;
 
@@ -29,11 +29,16 @@ import java.util.logging.Logger;
 public class HypLineFactory implements LineFactory {
 
 	private static final Logger log = Logger.getLogger("HypLineFactory");
-	private HypLine.Builder builder;
+	private CircleHypLine.Builder circBuilder;
+	private StraightHypLine.DiamBuilder strBuilder;
 
 	public HypLineFactory(double scale) {
-		builder = new Builder();
-		builder.setScale(scale);
+		circBuilder = new CircleHypLine.Builder();
+		circBuilder.setScale(scale);
+
+		strBuilder = new StraightHypLine.DiamBuilder();
+		strBuilder.setScale(scale);
+
 	}
 
 	@Override
@@ -43,13 +48,24 @@ public class HypLineFactory implements LineFactory {
 			throw new IllegalArgumentException("Points cannot be equal: " + p1 + " , " + p2);
 		}
 
+		if (isBisectorDiameter(p1, p2)) {
+			strBuilder.setPoint(p1);
+			return strBuilder.build();
+		}
+
 		Point centre = findPerpBisectorCentre(p1, p2);
 
-		builder.setCentre(centre);
-		builder.calcRadius();
-		builder.calcAngles();
+		circBuilder.setCentre(centre);
+		circBuilder.calcRadius();
+		circBuilder.calcAngles();
 
-		return builder.build();
+		return circBuilder.build();
+	}
+
+	private boolean isBisectorDiameter(Point p1, Point p2) {
+		EuclPoint euclP1 = new EuclPoint(p1);
+		EuclPoint euclP2 = new EuclPoint(p2);
+		return Math.abs(euclP1.magnitude() - euclP2.magnitude()) < 1E-6;
 	}
 
 	private Point findPerpBisectorCentre(Point p1, Point p2) {
@@ -69,13 +85,18 @@ public class HypLineFactory implements LineFactory {
 
 	@Override
 	public Line getGeodesicThrough(Point p1, Point p2) {
+
+		if (isDiameter(p1, p2)) {
+			strBuilder.setPoint(p1);
+			return strBuilder.build();
+		}
 		Point centre = findCentre(p1, p2);
 
-		builder.setCentre(centre);
-		builder.calcRadius();
-		builder.calcAngles();
+		circBuilder.setCentre(centre);
+		circBuilder.calcRadius();
+		circBuilder.calcAngles();
 
-		return builder.build();
+		return circBuilder.build();
 	}
 
 	private boolean isDiameter(Point p1, Point p2) {
@@ -110,17 +131,18 @@ public class HypLineFactory implements LineFactory {
 	public Line getSegmentJoining(Point p1, Point p2) {
 		Point centre = findCentre(p1, p2);
 		if (isDiameter(p1, p2)) {
-			System.out.println("Centre diam: " + centre);
+			strBuilder.setPoints(p1, p2);
+			return strBuilder.build();
 		}
 
-		builder.setCentre(centre);
-		builder.calcRadius();
+		circBuilder.setCentre(centre);
+		circBuilder.calcRadius();
 
 		double a1 = findAngleBetweenPoints(p1, centre);
 		double a2 = findAngleBetweenPoints(p2, centre);
-		builder.setAngles(a1, a2);
+		circBuilder.setAngles(a1, a2);
 
-		return builder.build();
+		return circBuilder.build();
 	}
 
 	private double findAngleBetweenPoints(Point p1, Point p2) {
