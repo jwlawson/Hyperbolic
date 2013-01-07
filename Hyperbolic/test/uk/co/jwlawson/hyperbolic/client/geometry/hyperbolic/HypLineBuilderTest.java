@@ -20,8 +20,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLine;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLine.Builder;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.CircleHypLine;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.CircleHypLine.Builder;
 
 /**
  * @author John
@@ -48,7 +48,7 @@ public class HypLineBuilderTest {
 		builder.setCentre(1, 1);
 		builder.setRadius(1);
 		builder.calcAngles();
-		HypLine line = builder.build();
+		CircleHypLine line = builder.build();
 
 		assertEquals(Math.PI, line.getEndAngle(), ERROR);
 		assertEquals(Math.PI * 3 / 2, line.getStartAngle(), ERROR);
@@ -59,7 +59,7 @@ public class HypLineBuilderTest {
 		builder.setCentre(1, 2);
 		builder.calcRadius();
 		builder.calcAngles();
-		HypLine line = builder.build();
+		CircleHypLine line = builder.build();
 
 		assertEquals(Math.PI * 3 / 2, line.getStartAngle(), ERROR);
 		assertEquals(3.7850927644, line.getEndAngle(), ERROR);
@@ -67,7 +67,7 @@ public class HypLineBuilderTest {
 
 	/**
 	 * Test method for
-	 * {@link uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLine.Builder#setAngles(double, double)}
+	 * {@link uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.CircleHypLine.Builder#setAngles(double, double)}
 	 * .
 	 */
 	@Test
@@ -75,7 +75,7 @@ public class HypLineBuilderTest {
 		builder.setCentre(-1, -1);
 		builder.setRadius(1);
 		builder.setAngles(0, Math.PI / 2);
-		HypLine line = builder.build();
+		CircleHypLine line = builder.build();
 		assertEquals(Math.PI / 2, line.getStartAngle(), ERROR);
 		assertEquals(0, line.getEndAngle(), ERROR);
 	}
@@ -85,7 +85,7 @@ public class HypLineBuilderTest {
 		builder.setCentre(1, 1);
 		builder.setRadius(1);
 		builder.setAngles(Math.PI, Math.PI * 3 / 2);
-		HypLine line = builder.build();
+		CircleHypLine line = builder.build();
 		assertEquals(Math.PI * 3 / 2, line.getStartAngle(), ERROR);
 		assertEquals(Math.PI, line.getEndAngle(), ERROR);
 	}
