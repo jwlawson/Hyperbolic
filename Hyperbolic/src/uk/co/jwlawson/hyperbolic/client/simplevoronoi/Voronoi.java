@@ -100,6 +100,7 @@ public class Voronoi {
 	 */
 	public List<GraphEdge> generateVoronoi(double[] xValuesIn, double[] yValuesIn, double minX,
 			double maxX, double minY, double maxY) {
+		init(xValuesIn.length);
 		sort(xValuesIn, yValuesIn, xValuesIn.length);
 
 		setBoundingBox(minX, maxX, minY, maxY);
@@ -129,17 +130,19 @@ public class Voronoi {
 		borderMaxY = maxY;
 	}
 
-	private void sort(double[] xValuesIn, double[] yValuesIn, int count) {
+	private void init(int count) {
 		sites = null;
 		allEdges = new LinkedList<GraphEdge>();
-
+	
 		numberOfSites = count;
 		nvertices = 0;
 		numberOfEdges = 0;
-
+	
 		double sn = (double) numberOfSites + 4;
 		sqrt_nsites = (int) Math.sqrt(sn);
+	}
 
+	private void sort(double[] xValuesIn, double[] yValuesIn, int count) {
 		// Copy the inputs so we don't modify the originals
 		double[] xValues = new double[count];
 		double[] yValues = new double[count];
@@ -252,8 +255,9 @@ public class Voronoi {
 			newedge.a = dx / dy;
 			newedge.c /= dy;// set formula of line, with y fixed to 1
 		}
-		/* Lines are stored in the form ax + by = c
-		 *	I think.
+		/*
+		 * Lines are stored in the form ax + by = c
+		 * I think.
 		 */
 
 		newedge.edgeNumber = numberOfEdges;
