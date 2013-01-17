@@ -103,7 +103,7 @@ public class Tiling implements CanvasHolder {
 				drawDrawables(scaled);
 
 				if (!orbit.hasNext()) {
-					pointsComputed();
+//					pointsComputed();
 				}
 
 				return orbit.hasNext();
