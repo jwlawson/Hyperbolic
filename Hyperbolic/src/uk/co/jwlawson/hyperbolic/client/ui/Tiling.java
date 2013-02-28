@@ -26,20 +26,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLineFactory;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
 import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
-import uk.co.jwlawson.hyperbolic.client.voronoi.BisectorAdapter;
-import uk.co.jwlawson.voronoi.Voronoi;
-import uk.co.jwlawson.voronoi.geometry.Bisector;
-import uk.co.jwlawson.voronoi.geometry.Site;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -103,7 +94,7 @@ public class Tiling implements CanvasHolder {
 				drawDrawables(scaled);
 
 				if (!orbit.hasNext()) {
-					pointsComputed();
+//					pointsComputed();
 				}
 
 				return orbit.hasNext();
@@ -122,49 +113,49 @@ public class Tiling implements CanvasHolder {
 	}
 
 	private void pointsComputed() {
-		final LineFactory factory = new EuclLineFactory(width, height);
-//		final LineFactory factory = new HypLineFactory(width / 2);
-		// Voronoi vor = new Voronoi(0.0001);
-
-		double[] xValues = getXValues();
-		double[] yValues = getYValues();
-
-		// List<GraphEdge> list = vor.generateVoronoi(xValues, yValues, -1, 1,
-// -1, 1);
-
-		// final Iterator<GraphEdge> iter = list.iterator();
-
-		Voronoi voronoi = new Voronoi();
-		voronoi.setSites(getSites());
-		List<Bisector> list = voronoi.getEdges();
-
-		final Iterator<Bisector> iter = list.iterator();
-
-		Scheduler.get().scheduleIncremental(new RepeatingCommand() {
-
-			@Override
-			public boolean execute() {
-
-//				GraphEdgeAdapter edge = new GraphEdgeAdapter(iter.next());
-				BisectorAdapter edge = new BisectorAdapter(iter.next());
-				HypPoint start = new HypPoint(edge.getStart());
-				HypPoint end = new HypPoint(edge.getEnd());
-				// start.scale(width / 2);
-				// end.scale(width / 2);
-				Line line = factory.getSegmentJoining(start, end);
-				mLineList.add(line);
-				// System.out.println("Added voronoi line " + line + " from " +
-				// start + " to " + end);
-
-				drawDrawables(line);
-
-				if (!iter.hasNext()) {
-					linesComputed();
-				}
-
-				return iter.hasNext();
-			}
-		});
+//		final LineFactory factory = new EuclLineFactory(width, height);
+////		final LineFactory factory = new HypLineFactory(width / 2);
+//		// Voronoi vor = new Voronoi(0.0001);
+//
+//		double[] xValues = getXValues();
+//		double[] yValues = getYValues();
+//
+//		// List<GraphEdge> list = vor.generateVoronoi(xValues, yValues, -1, 1,
+//// -1, 1);
+//
+//		// final Iterator<GraphEdge> iter = list.iterator();
+//
+////		Voronoi voronoi = new Voronoi();
+////		voronoi.setSites(getSites());
+////		List<Bisector> list = voronoi.getEdges();
+//
+////		final Iterator<Bisector> iter = list.iterator();
+//
+//		Scheduler.get().scheduleIncremental(new RepeatingCommand() {
+//
+//			@Override
+//			public boolean execute() {
+//
+////				GraphEdgeAdapter edge = new GraphEdgeAdapter(iter.next());
+//				BisectorAdapter edge = new BisectorAdapter(iter.next());
+//				HypPoint start = new HypPoint(edge.getStart());
+//				HypPoint end = new HypPoint(edge.getEnd());
+//				// start.scale(width / 2);
+//				// end.scale(width / 2);
+//				Line line = factory.getSegmentJoining(start, end);
+//				mLineList.add(line);
+//				// System.out.println("Added voronoi line " + line + " from " +
+//				// start + " to " + end);
+//
+//				drawDrawables(line);
+//
+//				if (!iter.hasNext()) {
+//					linesComputed();
+//				}
+//
+//				return iter.hasNext();
+//			}
+//		});
 
 	}
 
@@ -188,17 +179,17 @@ public class Tiling implements CanvasHolder {
 		return arr;
 	}
 
-	private List<Site> getSites() {
-		List<Site> result = new ArrayList<Site>();
-		for (Point p : mPointList) {
-			result.add(getSite(p));
-		}
-		return result;
-	}
-
-	private Site getSite(Point p) {
-		return new Site(p.getX(), p.getY());
-	}
+//	private List<Site> getSites() {
+//		List<Site> result = new ArrayList<Site>();
+//		for (Point p : mPointList) {
+//			result.add(getSite(p));
+//		}
+//		return result;
+//	}
+//
+//	private Site getSite(Point p) {
+//		return new Site(p.getX(), p.getY());
+//	}
 
 	public void initSize() {
 		Widget panel = canvas.getParent();

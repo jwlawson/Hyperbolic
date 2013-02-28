@@ -35,11 +35,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
+import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclPoint;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
-import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
+import uk.co.jwlawson.hyperbolic.client.group.BoundedTorusOrbit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,7 @@ public class Focal implements CanvasHolder {
 	private int height = 400;
 	private int width = 400;
 
+	private double x = 1;
 	private double y = 1;
 
 	private CssColor redrawColor = CssColor.make("rgb(255,255,255)");
@@ -89,6 +91,10 @@ public class Focal implements CanvasHolder {
 		initPoints();
 	}
 
+	public void setX(double x) {
+		this.x = x;
+	}
+
 	private void initPoints() {
 		restart = true;
 		clearCanvas();
@@ -98,12 +104,13 @@ public class Focal implements CanvasHolder {
 		final Point origin = new Point((y - 1) / (y + 1), 0);
 
 		// Change this bit!
-		final HypLineFactory factory = new HypLineFactory(width / 2);
+//		final HypLineFactory factory = new HypLineFactory(width / 2);
 		// final HypOrbitPoints orbit = new HypOrbitPoints();
 		// ----------------------
-		// final EuclLine.Factory factory = new EuclLineFactory(width, height);
+		final EuclLineFactory factory = new EuclLineFactory(width, height);
+		final BoundedTorusOrbit orbit = new BoundedTorusOrbit((float) x, (float) y, width, height);
 		// TorusOrbitPoints orbit = new TorusOrbitPoints(width, height);
-		final IdealTorusOrbit orbit = new IdealTorusOrbit(y);
+//		final IdealTorusOrbit orbit = new IdealTorusOrbit(y);
 		orbit.setStart(origin);
 
 		Point p = orbit.next();
@@ -117,17 +124,13 @@ public class Focal implements CanvasHolder {
 			@Override
 			public boolean execute() {
 				Point next = orbit.next();
+				next.scale(width / 8.5);
 				Line line = factory.getPerpendicularBisector(origin, next);
 				mLineList.add(line);
-				next.scale(width / 2);
+//				next.scale(width / 2);
 				mPointList.add(next);
 
-				context.save();
-				context.translate(width, height);
-				context.scale(2.0, -2.0);
-				next.draw(context);
-				line.draw(context);
-				context.restore();
+				drawDrawables(next, line);
 
 				if (!orbit.hasNext()) {
 					computeFinished();
@@ -144,6 +147,16 @@ public class Focal implements CanvasHolder {
 
 		log.fine("Points loaded");
 
+	}
+
+	private void drawDrawables(Drawable... list) {
+		context.save();
+		context.translate(width, height);
+		context.scale(2.0, -2.0);
+		for (Drawable d : list) {
+			d.draw(context);
+		}
+		context.restore();
 	}
 
 	public void initSize() {
@@ -169,12 +182,12 @@ public class Focal implements CanvasHolder {
 		context.translate(width, height);
 		context.scale(2.0, -2.0);
 
-		context.beginPath();
-		context.arc(0, 0, width / 2, 0, 2 * Math.PI);
-		context.closePath();
-		context.setStrokeStyle("#000000");
-		context.setLineWidth(0.5);
-		context.stroke();
+//		context.beginPath();
+//		context.arc(0, 0, width / 2, 0, 2 * Math.PI);
+//		context.closePath();
+//		context.setStrokeStyle("#000000");
+//		context.setLineWidth(0.5);
+//		context.stroke();
 
 		for (Line line : mLineList) {
 			line.draw(context);
