@@ -40,27 +40,38 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 	private static final String FOCAL_MOUNT_ID = "focalcanvas";
 	private static final String SLIDER_ID = "options";
 	private static final String SLIDER_VALUE_STYLE = "slider-values";
-	private static final String T_LABEL = "y = ";
+	private static final String Y_LABEL = "y = ";
+	private static final String X_LABEL = "x = ";
 
 	private static final Logger log = Logger.getLogger("Hyperbolic");
 
 	private Tiling mTiling;
 	private Focal mFocal;
 
-	private Slider bSlider;
+	private Slider ySlider;
+	private Label yValue;
 
-	private Label bValue;
+	private Slider xSlider;
+	private Label xValue;
 
 	@Override
 	public void onModuleLoad() {
 
-		bValue = new Label(T_LABEL + "1");
-		bValue.addStyleName(SLIDER_VALUE_STYLE);
-		bSlider = new Slider("t", 1, 500, 100);
-		bSlider.addListener(this);
+		yValue = new Label(Y_LABEL + "1");
+		yValue.addStyleName(SLIDER_VALUE_STYLE);
+		ySlider = new Slider("x", 1, 500, 100);
+		ySlider.addListener(this);
 
-		RootPanel.get(SLIDER_ID).add(bValue);
-		RootPanel.get(SLIDER_ID).add(bSlider);
+		xValue = new Label(X_LABEL + "1");
+		xValue.addStyleName(SLIDER_VALUE_STYLE);
+		xSlider = new Slider("y", 1, 500, 100);
+		xSlider.addListener(this);
+
+		RootPanel.get(SLIDER_ID).add(yValue);
+		RootPanel.get(SLIDER_ID).add(ySlider);
+
+		RootPanel.get(SLIDER_ID).add(xValue);
+		RootPanel.get(SLIDER_ID).add(xSlider);
 
 		mTiling = new Tiling();
 		mFocal = new Focal();
@@ -99,8 +110,13 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 	public boolean onSlide(SliderEvent e) {
 		Slider source = e.getSource();
 
-		if (bSlider == source) {
-			bValue.setText(T_LABEL + (double) e.getValues()[0] / 100);
+		if (ySlider == source) {
+			yValue.setText(Y_LABEL + (double) e.getValues()[0] / 100);
+			reloadTimer.schedule(500);
+			return true;
+		}
+		if (xSlider == source) {
+			xValue.setText(X_LABEL + (double) e.getValues()[0] / 100);
 			reloadTimer.schedule(500);
 			return true;
 		}
@@ -111,7 +127,8 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 		@Override
 		public void run() {
-			mFocal.setY((double) bSlider.getValueAtIndex(0) / 100);
+			mFocal.setX((double) xSlider.getValueAtIndex(0) / 100);
+			mFocal.setY((double) ySlider.getValueAtIndex(0) / 100);
 		}
 	};
 
