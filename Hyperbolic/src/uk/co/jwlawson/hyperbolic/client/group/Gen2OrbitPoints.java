@@ -16,7 +16,6 @@
 package uk.co.jwlawson.hyperbolic.client.group;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.isometries.Isom;
 
 import java.util.ArrayList;
@@ -28,28 +27,8 @@ import java.util.List;
  */
 public class Gen2OrbitPoints extends OrbitIter {
 
-	private Point last;
-	private HypPoint hyp;
-
 	public Gen2OrbitPoints(Isom A, Isom B) {
 		Map.setIsoms(A, B);
-	}
-
-	@Override
-	public boolean hasNext() {
-		hyp = new HypPoint(last);
-		if (hyp.euclMag() > 0.999999) {
-			return false;
-		} else {
-			return super.hasNext();
-		}
-	}
-
-	@Override
-	public Point next() {
-		Point p = super.next();
-		last = new Point(p);
-		return p;
 	}
 
 	@Override
@@ -58,21 +37,21 @@ public class Gen2OrbitPoints extends OrbitIter {
 		ArrayList<OrbitPoint> nextList = new ArrayList<OrbitPoint>();
 
 		OrbitPoint q;
-		if (!map.equals(Map.Am)) {
+		if (map == null || !map.equals(Map.Am)) {
 			q = Map.A.map(p);
 			nextList.add(q);
 		}
-		if (!map.equals(Map.Bm)) {
+		if (map == null || !map.equals(Map.Bm)) {
 			q = Map.B.map(p);
 			nextList.add(q);
 		}
 
-		if (!map.equals(Map.B)) {
+		if (map == null || !map.equals(Map.B)) {
 			q = Map.Bm.map(p);
 			nextList.add(q);
 		}
 
-		if (!map.equals(Map.A)) {
+		if (map == null || !map.equals(Map.A)) {
 			q = Map.Am.map(p);
 			nextList.add(q);
 		}
@@ -84,7 +63,7 @@ public class Gen2OrbitPoints extends OrbitIter {
 	}
 
 	private enum Map implements IsomEnum {
-		A, B, Am, Bm, Null;
+		A, B, Am, Bm;
 
 		private Isom isom;
 

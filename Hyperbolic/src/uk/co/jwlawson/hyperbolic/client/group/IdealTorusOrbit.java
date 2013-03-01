@@ -22,7 +22,7 @@ import uk.co.jwlawson.hyperbolic.client.geometry.isometries.IsomH;
  * @author John
  * 
  */
-public class IdealTorusOrbit extends Gen2OrbitPoints {
+public class IdealTorusOrbit extends BoundedHypGen2Orbit {
 
 	public IdealTorusOrbit(double y) {
 		super(getIsomA(y), getIsomB(y));

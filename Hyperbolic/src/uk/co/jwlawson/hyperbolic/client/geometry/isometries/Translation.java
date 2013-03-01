@@ -13,18 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.jwlawson.hyperbolic.client.group;
+package uk.co.jwlawson.hyperbolic.client.geometry.isometries;
 
-import uk.co.jwlawson.hyperbolic.client.geometry.isometries.Translation;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
 /**
  * @author John
  * 
  */
-public class TorusOrbit extends Gen2OrbitPoints {
+public class Translation extends Isom {
 
-	public TorusOrbit(float x, float y) {
-		super(new Translation(x, y), new Translation(1, 0));
+	private double x, y;
+
+	public Translation(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	@Override
+	public Point map(Point p) {
+		double newX = p.getX() + x;
+		double newY = p.getY() + y;
+		Point result = new Point(newX, newY);
+		return result;
+	}
+
+	@Override
+	public Isom getInverse() {
+		return new Translation(-x, -y);
 	}
 
 }

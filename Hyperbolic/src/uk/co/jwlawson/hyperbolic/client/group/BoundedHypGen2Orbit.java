@@ -15,16 +15,38 @@
  */
 package uk.co.jwlawson.hyperbolic.client.group;
 
-import uk.co.jwlawson.hyperbolic.client.geometry.isometries.Translation;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
+import uk.co.jwlawson.hyperbolic.client.geometry.isometries.Isom;
 
 /**
  * @author John
  * 
  */
-public class TorusOrbit extends Gen2OrbitPoints {
+public class BoundedHypGen2Orbit extends Gen2OrbitPoints {
 
-	public TorusOrbit(float x, float y) {
-		super(new Translation(x, y), new Translation(1, 0));
+	private Point last;
+	private HypPoint hyp;
+
+	public BoundedHypGen2Orbit(Isom A, Isom B) {
+		super(A, B);
+	}
+
+	@Override
+	public boolean hasNext() {
+		hyp = new HypPoint(last);
+		if (hyp.euclMag() > 0.999999) {
+			return false;
+		} else {
+			return super.hasNext();
+		}
+	}
+
+	@Override
+	public Point next() {
+		Point p = super.next();
+		last = new Point(p);
+		return p;
 	}
 
 }
