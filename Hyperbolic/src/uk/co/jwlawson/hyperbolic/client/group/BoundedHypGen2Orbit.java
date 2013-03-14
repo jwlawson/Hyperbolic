@@ -25,7 +25,7 @@ import uk.co.jwlawson.hyperbolic.client.geometry.isometries.Isom;
  */
 public class BoundedHypGen2Orbit extends Gen2OrbitPoints {
 
-	private Point last;
+	private Point last = new Point(0, 0);
 	private HypPoint hyp;
 
 	public BoundedHypGen2Orbit(Isom A, Isom B) {
