@@ -15,6 +15,23 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
+import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
+import uk.co.jwlawson.hyperbolic.client.simplevoronoi.GraphEdge;
+import uk.co.jwlawson.hyperbolic.client.simplevoronoi.GraphEdgeAdapter;
+import uk.co.jwlawson.hyperbolic.client.simplevoronoi.Voronoi;
+
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
@@ -23,24 +40,6 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-
-import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
-import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
-import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.Util;
-import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
-import uk.co.jwlawson.hyperbolic.client.simplevoronoi.GraphEdge;
-import uk.co.jwlawson.hyperbolic.client.simplevoronoi.GraphEdgeAdapter;
-import uk.co.jwlawson.hyperbolic.client.simplevoronoi.Voronoi;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * @author John
@@ -103,7 +102,7 @@ public class Tiling implements CanvasHolder {
 				drawDrawables(scaled);
 
 				if (!orbit.hasNext()) {
-					pointsComputed();
+//					pointsComputed();
 				}
 
 				return orbit.hasNext();
@@ -123,7 +122,7 @@ public class Tiling implements CanvasHolder {
 
 	private void pointsComputed() {
 		final LineFactory factory = new HypLineFactory(width / 2);
-		Voronoi vor = new Voronoi(0.0001);
+		Voronoi vor = new Voronoi(0.01);
 
 		double[] xValues = getXValues();
 		double[] yValues = getYValues();
@@ -142,8 +141,7 @@ public class Tiling implements CanvasHolder {
 				HypPoint end = new HypPoint(edge.getEnd());
 				// start.scale(width / 2);
 				// end.scale(width / 2);
-				Line line = factory.getSegmentJoining(Util.convertKleinToPoincare(start),
-						Util.convertKleinToPoincare(end));
+				Line line = factory.getSegmentJoining(start, end);
 				mLineList.add(line);
 				// System.out.println("Added voronoi line " + line + " from " +
 				// start + " to " + end);
