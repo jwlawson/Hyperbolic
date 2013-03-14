@@ -15,6 +15,16 @@
  */
 package uk.co.jwlawson.hyperbolic.client;
 
+import java.util.logging.Logger;
+
+import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLineFactory;
+import uk.co.jwlawson.hyperbolic.client.ui.Focal;
+import uk.co.jwlawson.hyperbolic.client.ui.SizeChangeListener;
+import uk.co.jwlawson.hyperbolic.client.ui.Tiling;
+import uk.co.jwlawson.hyperbolic.client.widget.Slider;
+import uk.co.jwlawson.hyperbolic.client.widget.SliderEvent;
+import uk.co.jwlawson.hyperbolic.client.widget.SliderListener;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
@@ -23,18 +33,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import uk.co.jwlawson.hyperbolic.client.ui.Focal;
-import uk.co.jwlawson.hyperbolic.client.ui.Tiling;
-import uk.co.jwlawson.hyperbolic.client.widget.Slider;
-import uk.co.jwlawson.hyperbolic.client.widget.SliderEvent;
-import uk.co.jwlawson.hyperbolic.client.widget.SliderListener;
-
-import java.util.logging.Logger;
-
 /**
  * @author John Lawson
  */
-public class Hyperbolic implements EntryPoint, SliderListener {
+public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListener {
 
 	private static final String TILING_MOUNT_ID = "tilingcanvas";
 	private static final String FOCAL_MOUNT_ID = "focalcanvas";
@@ -53,6 +55,8 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 	private Slider xSlider;
 	private Label xValue;
+
+	private TorusPointGen pointGen = new TorusPointGen();
 
 	@Override
 	public void onModuleLoad() {
@@ -75,8 +79,11 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 		mTiling = new Tiling();
 		mFocal = new Focal();
+		mFocal.setSizeListener(this);
 
-		mTiling.addToPanel(RootPanel.get(TILING_MOUNT_ID));
+		pointGen.addPointHandler(mFocal);
+
+//		mTiling.addToPanel(RootPanel.get(TILING_MOUNT_ID));
 		mFocal.addToPanel(RootPanel.get(FOCAL_MOUNT_ID));
 
 		Window.addResizeHandler(new ResizeHandler() {
@@ -91,13 +98,13 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 			@Override
 			public void onResize(ResizeEvent event) {
-				resizeTimer.schedule(100);
+				resizeTimer.schedule(300);
 			}
 		});
 	}
 
 	private void doLayoutCalculations() {
-		mTiling.initSize();
+		// mTiling.initSize();
 		mFocal.initSize();
 	}
 
@@ -109,6 +116,7 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 	@Override
 	public boolean onSlide(SliderEvent e) {
 		Slider source = e.getSource();
+		pointGen.stop();
 
 		if (ySlider == source) {
 			yValue.setText(Y_LABEL + (double) e.getValues()[0] / 100);
@@ -127,8 +135,9 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 		@Override
 		public void run() {
-			mFocal.setX((double) xSlider.getValueAtIndex(0) / 100);
-			mFocal.setY((double) ySlider.getValueAtIndex(0) / 100);
+			pointGen.setX((double) xSlider.getValueAtIndex(0) / 100);
+			pointGen.setY((double) ySlider.getValueAtIndex(0) / 100);
+			pointGen.start();
 		}
 	};
 
@@ -140,5 +149,14 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 	@Override
 	public void onStop(SliderEvent e) {
 
+	}
+
+	@Override
+	public void sizeChanged(float width, float height) {
+		mFocal.setLineFactory(new EuclLineFactory((int) width, (int) height));
+		pointGen.stop();
+		pointGen.setHeight(height);
+		pointGen.setWidth(width);
+		pointGen.start();
 	}
 }
