@@ -18,7 +18,7 @@ package uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLine.Builder;
+import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclPoint;
 
 import java.util.logging.Logger;
 
@@ -29,11 +29,16 @@ import java.util.logging.Logger;
 public class HypLineFactory implements LineFactory {
 
 	private static final Logger log = Logger.getLogger("HypLineFactory");
-	private HypLine.Builder builder;
+	private CircleHypLine.Builder circBuilder;
+	private StraightHypLine.DiamBuilder strBuilder;
 
 	public HypLineFactory(double scale) {
-		builder = new Builder();
-		builder.setScale(scale);
+		circBuilder = new CircleHypLine.Builder();
+		circBuilder.setScale(scale);
+
+		strBuilder = new StraightHypLine.DiamBuilder();
+		strBuilder.setScale(scale);
+
 	}
 
 	@Override
@@ -43,76 +48,59 @@ public class HypLineFactory implements LineFactory {
 			throw new IllegalArgumentException("Points cannot be equal: " + p1 + " , " + p2);
 		}
 
-		if (p2.equals(new Point(0, 0))) {
-			return getPerpendicularBisector(p2, p1);
+		if (isBisectorDiameter(p1, p2)) {
+			strBuilder.setPoint(p1);
+			return strBuilder.build();
 		}
 
-		Point mapped = findMappedPoint(p1, p2);
+		Point centre = findPerpBisectorCentre(p1, p2);
 
-		Point centreMapped = findCentreForPerpBisectorWithOrigin(mapped);
+		circBuilder.setCentre(centre);
+		circBuilder.calcRadius();
+		circBuilder.calcAngles();
 
-		Point centre = inverseCentre(p1, centreMapped);
-
-		builder.setCentre(centre);
-		builder.calcRadius();
-		builder.calcAngles();
-
-		return builder.build();
+		return circBuilder.build();
 	}
 
-	/** Mobius map that takes p1 to zero. Returns the image of p2 */
-	private Point findMappedPoint(Point p1, Point p2) {
-		double numX = p2.getX() - p1.getX();
-		double numY = p2.getY() - p1.getY();
-		double denX = 1 - p1.getX() * p2.getX() - p1.getY() * p2.getY();
-		double denY = p2.getX() * p1.getY() - p1.getX() * p2.getY();
-		Point mapped = complexDivide(numX, numY, denX, denY);
-		return mapped;
+	private boolean isBisectorDiameter(Point p1, Point p2) {
+		EuclPoint euclP1 = new EuclPoint(p1);
+		EuclPoint euclP2 = new EuclPoint(p2);
+		return Math.abs(euclP1.magnitude() - euclP2.magnitude()) < 1E-6;
 	}
 
-	/** Inverse map taking 0 to p1. Returns the image of centreMapped */
-	private Point inverseCentre(Point p1, Point centreMapped) {
-		double numX = centreMapped.getX() + p1.getX();
-		double numY = centreMapped.getY() + p1.getY();
-		double denX = 1 + centreMapped.getX() * p1.getX() + centreMapped.getY() * p1.getY();
-		double denY = p1.getX() * centreMapped.getY() - p1.getY() * centreMapped.getX();
-		Point centre = complexDivide(numX, numY, denX, denY);
-		return centre;
+	private Point findPerpBisectorCentre(Point p1, Point p2) {
+		return findPerpBisectorCentre(p1.getX(), p1.getY(), p2.getX(), p2.getY());
 	}
 
-	private Point findCentreForPerpBisectorWithOrigin(Point p) {
-		HypPoint hyp = new HypPoint(p);
-		double rho = hyp.euclMag();
-		double hypDist = hyp.magnitude();
-		hypDist = hypDist / 2;
-		double dz = (Math.pow(Math.E, hypDist) - 1) / (Math.pow(Math.E, hypDist) + 1);
-		double modifier = (dz * dz + 1) / (2 * dz * rho);
+	private Point findPerpBisectorCentre(double x1, double y1, double x2, double y2) {
+		double a = x1 - (x1 * x2 * x2) - (x1 * y2 * y2) - x2 + (x1 * x1 * x2) + (x2 * y1 * y1);
+		double b = y1 - (x2 * x2 * y1) - (y1 * y2 * y2) - y2 + (x1 * x1 * y2) + (y1 * y1 * y2);
+		double div = (x1 * x1) + (y1 * y1) - (x2 * x2) - (y2 * y2);
 
-		double x = p.getX() * modifier;
-		double y = p.getY() * modifier;
+		a = a / div;
+		b = b / div;
 
-		return new Point(x, y);
-	}
-
-	private Point complexDivide(double x1, double y1, double x2, double y2) {
-		double x = x1 * x2 + y1 * y2;
-		double y = y1 * x2 - x1 * y2;
-		double div = x2 * x2 + y2 * y2;
-		x = x / div;
-		y = y / div;
-
-		return new Point(x, y);
+		return new Point(a, b);
 	}
 
 	@Override
 	public Line getGeodesicThrough(Point p1, Point p2) {
+
+		if (isDiameter(p1, p2)) {
+			strBuilder.setPoint(p1);
+			return strBuilder.build();
+		}
 		Point centre = findCentre(p1, p2);
 
-		builder.setCentre(centre);
-		builder.calcRadius();
-		builder.calcAngles();
+		circBuilder.setCentre(centre);
+		circBuilder.calcRadius();
+		circBuilder.calcAngles();
 
-		return builder.build();
+		return circBuilder.build();
+	}
+
+	private boolean isDiameter(Point p1, Point p2) {
+		return p1.getX() * p2.getY() == p1.getY() * p2.getX();
 	}
 
 	private Point findCentre(Point p1, Point p2) {
@@ -137,5 +125,34 @@ public class HypLineFactory implements LineFactory {
 		double a = x1 * x1 + y1 * y1 + 1 - 2 * y1 * centreY;
 		a = a / (2 * x1);
 		return a;
+	}
+
+	@Override
+	public Line getSegmentJoining(Point p1, Point p2) {
+		Point centre = findCentre(p1, p2);
+		if (isDiameter(p1, p2)) {
+			strBuilder.setPoints(p1, p2);
+			return strBuilder.build();
+		}
+
+		circBuilder.setCentre(centre);
+		circBuilder.calcRadius();
+
+		double a1 = findAngleBetweenPoints(p1, centre);
+		double a2 = findAngleBetweenPoints(p2, centre);
+		circBuilder.setAngles(a1, a2);
+
+		return circBuilder.build();
+	}
+
+	private double findAngleBetweenPoints(Point p1, Point p2) {
+		double dx = p1.getX() - p2.getX();
+		double dy = p1.getY() - p2.getY();
+
+		double theta = Math.atan2(dy, dx);
+		if (theta < 0) {
+			theta += Math.PI * 2;
+		}
+		return theta;
 	}
 }

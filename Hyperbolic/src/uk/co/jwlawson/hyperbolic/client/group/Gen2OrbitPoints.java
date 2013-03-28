@@ -15,146 +15,70 @@
  */
 package uk.co.jwlawson.hyperbolic.client.group;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.isometries.Isom;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author John
  * 
  */
-public class Gen2OrbitPoints implements Iterator<Point> {
-
-	private Isom A, B, Am, Bm;
-
-	private List<Point> masterList;
-
-	private List<Point> currentList;
-	private List<Map> currentMapList;
-	private Iterator<Point> currentIter;
-
-	private List<Point> nextList;
-	private List<Map> nextMapList;
-
-	private int count = 0;
-	private int index = 0;
-
-	private Point current, next;
-	private HypPoint hyp;
-
-	private boolean calcMore = true;
+public class Gen2OrbitPoints extends OrbitIter {
 
 	public Gen2OrbitPoints(Isom A, Isom B) {
-		this.A = A;
-		this.B = B;
-		Am = A.getInverse();
-		Bm = B.getInverse();
-
-		masterList = new LinkedList<Point>();
-		currentList = new LinkedList<Point>();
-		currentMapList = new LinkedList<Gen2OrbitPoints.Map>();
-		currentMapList.add(Map.Null);
-
-		next = new HypPoint(0, 0);
-		currentList.add(next);
-
-		currentIter = currentList.iterator();
-		currentIter.next();
-
-		nextList = new LinkedList<Point>();
-		nextMapList = new LinkedList<Gen2OrbitPoints.Map>();
-
-		hyp = new HypPoint(next);
+		Map.setIsoms(A, B);
 	}
 
 	@Override
-	public boolean hasNext() {
-		hyp.clone(next);
-		if (count > 600 || hyp.euclMag() > 0.9999999) {
-			calcMore = false;
-			return currentIter.hasNext();
-		} else {
-			return true;
+	protected List<OrbitPoint> calculateNextLevel(OrbitPoint p) {
+		Map map = (Map) p.getE();
+		ArrayList<OrbitPoint> nextList = new ArrayList<OrbitPoint>();
+
+		OrbitPoint q;
+		if (map == null || !map.equals(Map.Am)) {
+			q = Map.A.map(p);
+			nextList.add(q);
 		}
-	}
-
-	@Override
-	public Point next() {
-
-		current = new Point(next);
-
-		if (calcMore) {
-			calculateNextLevel(current);
-		}
-		if (currentIter.hasNext()) {
-			next = currentIter.next();
-			index++;
-		} else {
-			masterList.addAll(nextList);
-			System.out.println("Adding " + nextList.size() + " points to the master");
-			currentList = new LinkedList<Point>(nextList);
-			currentMapList = new LinkedList<Map>(nextMapList);
-			currentIter = currentList.iterator();
-			nextList.clear();
-			nextMapList.clear();
-			next = currentIter.next();
-			index = 0;
+		if (map == null || !map.equals(Map.Bm)) {
+			q = Map.B.map(p);
+			nextList.add(q);
 		}
 
-		count++;
-		if (count % 100 == 0) {
-			System.out.println(count);
-		}
-		return current;
-	}
-
-	private void calculateNextLevel(Point p) {
-
-		Map map = currentMapList.get(index);
-
-		Point q;
-		if (!map.equals(Map.Am)) {
-			q = A.map(p);
-			if (!(masterList.contains(q) || nextList.contains(q))) {
-				nextList.add(q);
-				nextMapList.add(Map.A);
-			}
-		}
-		if (!map.equals(Map.Bm)) {
-			q = B.map(p);
-			if (!(masterList.contains(q) || nextList.contains(q))) {
-				nextList.add(q);
-				nextMapList.add(Map.B);
-			}
+		if (map == null || !map.equals(Map.B)) {
+			q = Map.Bm.map(p);
+			nextList.add(q);
 		}
 
-		if (!map.equals(Map.B)) {
-			q = Bm.map(p);
-			if (!(masterList.contains(q) || nextList.contains(q))) {
-				nextList.add(q);
-				nextMapList.add(Map.Bm);
-			}
+		if (map == null || !map.equals(Map.A)) {
+			q = Map.Am.map(p);
+			nextList.add(q);
 		}
-
-		if (!map.equals(Map.A)) {
-			q = Am.map(p);
-			if (!(masterList.contains(q) || nextList.contains(q))) {
-				nextList.add(q);
-				nextMapList.add(Map.Am);
-			}
-		}
-
+		return nextList;
 	}
 
 	@Override
 	public void remove() {
 	}
 
-	private enum Map {
-		A, B, Am, Bm, Null;
+	private enum Map implements IsomEnum {
+		A, B, Am, Bm;
+
+		private Isom isom;
+
+		private static void setIsoms(Isom a, Isom b) {
+			A.isom = a;
+			Am.isom = a.getInverse();
+			B.isom = b;
+			Bm.isom = b.getInverse();
+		}
+
+		@Override
+		public OrbitPoint map(Point p) {
+			OrbitPoint result = new OrbitPoint(isom.map(p));
+			result.setE(this);
+			return result;
+		}
 	}
 }

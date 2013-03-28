@@ -15,14 +15,6 @@
  */
 package uk.co.jwlawson.hyperbolic.client;
 
-import java.util.logging.Logger;
-
-import uk.co.jwlawson.hyperbolic.client.ui.Focal;
-import uk.co.jwlawson.hyperbolic.client.ui.Tiling;
-import uk.co.jwlawson.hyperbolic.client.widget.Slider;
-import uk.co.jwlawson.hyperbolic.client.widget.SliderEvent;
-import uk.co.jwlawson.hyperbolic.client.widget.SliderListener;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
@@ -30,6 +22,14 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+
+import uk.co.jwlawson.hyperbolic.client.ui.Focal;
+import uk.co.jwlawson.hyperbolic.client.ui.Tiling;
+import uk.co.jwlawson.hyperbolic.client.widget.Slider;
+import uk.co.jwlawson.hyperbolic.client.widget.SliderEvent;
+import uk.co.jwlawson.hyperbolic.client.widget.SliderListener;
+
+import java.util.logging.Logger;
 
 /**
  * @author John Lawson
@@ -40,37 +40,38 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 	private static final String FOCAL_MOUNT_ID = "focalcanvas";
 	private static final String SLIDER_ID = "options";
 	private static final String SLIDER_VALUE_STYLE = "slider-values";
-	private static final String A_LABEL = "a = sqrt(2) + ";
-	private static final String B_LABEL = "b = sqrt(2) + ";
+	private static final String Y_LABEL = "y = ";
+	private static final String X_LABEL = "x = ";
 
 	private static final Logger log = Logger.getLogger("Hyperbolic");
 
 	private Tiling mTiling;
 	private Focal mFocal;
 
-	private Slider aSlider;
-	private Slider bSlider;
+	private Slider ySlider;
+	private Label yValue;
 
-	private Label aValue, bValue;
+	private Slider xSlider;
+	private Label xValue;
 
 	@Override
 	public void onModuleLoad() {
 
-		aValue = new Label(A_LABEL + "0");
-		aValue.addStyleName(SLIDER_VALUE_STYLE);
-		aSlider = new Slider("a", -69, 100, 0);
-		aSlider.addListener(this);
+		yValue = new Label(Y_LABEL + "1");
+		yValue.addStyleName(SLIDER_VALUE_STYLE);
+		ySlider = new Slider("x", 1, 500, 100);
+		ySlider.addListener(this);
 
-		RootPanel.get(SLIDER_ID).add(aValue);
-		RootPanel.get(SLIDER_ID).add(aSlider);
+		xValue = new Label(X_LABEL + "1");
+		xValue.addStyleName(SLIDER_VALUE_STYLE);
+		xSlider = new Slider("y", 1, 500, 100);
+		xSlider.addListener(this);
 
-		bValue = new Label(B_LABEL + "0");
-		bValue.addStyleName(SLIDER_VALUE_STYLE);
-		bSlider = new Slider("b", -69, 100, 0);
-		bSlider.addListener(this);
+		RootPanel.get(SLIDER_ID).add(yValue);
+		RootPanel.get(SLIDER_ID).add(ySlider);
 
-		RootPanel.get(SLIDER_ID).add(bValue);
-		RootPanel.get(SLIDER_ID).add(bSlider);
+		RootPanel.get(SLIDER_ID).add(xValue);
+		RootPanel.get(SLIDER_ID).add(xSlider);
 
 		mTiling = new Tiling();
 		mFocal = new Focal();
@@ -109,13 +110,13 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 	public boolean onSlide(SliderEvent e) {
 		Slider source = e.getSource();
 
-		if (aSlider == source) {
-			aValue.setText(A_LABEL + (double) e.getValues()[0] / 100);
+		if (ySlider == source) {
+			yValue.setText(Y_LABEL + (double) e.getValues()[0] / 100);
 			reloadTimer.schedule(500);
 			return true;
 		}
-		if (bSlider == source) {
-			bValue.setText(B_LABEL + (double) e.getValues()[0] / 100);
+		if (xSlider == source) {
+			xValue.setText(X_LABEL + (double) e.getValues()[0] / 100);
 			reloadTimer.schedule(500);
 			return true;
 		}
@@ -126,8 +127,8 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 		@Override
 		public void run() {
-			mFocal.setParams(1 / Math.sqrt(2) + ((double) aSlider.getValueAtIndex(0) / 100), 1
-					/ Math.sqrt(2) + ((double) bSlider.getValueAtIndex(0) / 100));
+			mFocal.setX((double) xSlider.getValueAtIndex(0) / 100);
+			mFocal.setY((double) ySlider.getValueAtIndex(0) / 100);
 		}
 	};
 
