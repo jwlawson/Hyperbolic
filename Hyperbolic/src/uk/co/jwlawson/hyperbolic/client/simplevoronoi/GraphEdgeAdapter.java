@@ -61,10 +61,10 @@ public class GraphEdgeAdapter {
 		double c = edge.y1 - m * edge.x1;
 
 		double pm = 0.99999999 + m * m - c * c;
-		if (pm < 0) {
+//		if (pm < 0) {
 //			System.out.println("NaN! m = " + m + " c = " + c + " pm^2 = "
 //					+ (0.99999999 + m * m - c * c));
-		}
+//		}
 		pm = Math.sqrt(pm);
 
 		double x1 = (-m * c + pm) / (1 + m * m);

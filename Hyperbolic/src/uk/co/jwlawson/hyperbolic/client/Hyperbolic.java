@@ -15,13 +15,7 @@
  */
 package uk.co.jwlawson.hyperbolic.client;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
+import java.util.logging.Logger;
 
 import uk.co.jwlawson.hyperbolic.client.ui.Focal;
 import uk.co.jwlawson.hyperbolic.client.ui.Tiling;
@@ -29,7 +23,13 @@ import uk.co.jwlawson.hyperbolic.client.widget.Slider;
 import uk.co.jwlawson.hyperbolic.client.widget.SliderEvent;
 import uk.co.jwlawson.hyperbolic.client.widget.SliderListener;
 
-import java.util.logging.Logger;
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * @author John Lawson
@@ -64,6 +64,7 @@ public class Hyperbolic implements EntryPoint, SliderListener {
 
 		mTiling = new Tiling();
 		mFocal = new Focal();
+		mFocal.initHandlers();
 
 		mTiling.addToPanel(RootPanel.get(TILING_MOUNT_ID));
 		mFocal.addToPanel(RootPanel.get(FOCAL_MOUNT_ID));

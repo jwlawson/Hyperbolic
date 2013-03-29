@@ -1,3 +1,4 @@
+
 package uk.co.jwlawson.hyperbolic.client.simplevoronoi;
 
 /*
@@ -100,6 +101,7 @@ public class Voronoi {
 	 */
 	public List<GraphEdge> generateVoronoi(double[] xValuesIn, double[] yValuesIn, double minX,
 			double maxX, double minY, double maxY) {
+		init(xValuesIn.length);
 		sort(xValuesIn, yValuesIn, xValuesIn.length);
 
 		setBoundingBox(minX, maxX, minY, maxY);
@@ -129,17 +131,19 @@ public class Voronoi {
 		borderMaxY = maxY;
 	}
 
-	private void sort(double[] xValuesIn, double[] yValuesIn, int count) {
+	private void init(int count) {
 		sites = null;
 		allEdges = new LinkedList<GraphEdge>();
-
+	
 		numberOfSites = count;
 		nvertices = 0;
 		numberOfEdges = 0;
-
+	
 		double sn = (double) numberOfSites + 4;
 		sqrt_nsites = (int) Math.sqrt(sn);
+	}
 
+	private void sort(double[] xValuesIn, double[] yValuesIn, int count) {
 		// Copy the inputs so we don't modify the originals
 		double[] xValues = new double[count];
 		double[] yValues = new double[count];
@@ -394,7 +398,7 @@ public class Voronoi {
 				: he.edgeListEdge.sitesGeneratingThis[RIGHT_EDGE]);
 	}
 
-	private void insertHalfEdgeToRightOf(HalfEdge lb, HalfEdge newHe) {
+	private void insertHalfEdgeToLeftOf(HalfEdge lb, HalfEdge newHe) {
 		newHe.halfEdgeToLeft = lb;
 		newHe.halfEdgeToRight = lb.halfEdgeToRight;
 		(lb.halfEdgeToRight).halfEdgeToLeft = newHe;
@@ -774,7 +778,7 @@ public class Voronoi {
 				bisector = createHalfEdge(edge, LEFT_EDGE);
 				// insert this new bisector edge between the left and right
 				// vectors in a linked list
-				insertHalfEdgeToRightOf(lbnd, bisector);
+				insertHalfEdgeToLeftOf(lbnd, bisector);
 
 				// if the new bisector intersects with the left edge,
 				// remove the left edge's vertex, and put in the new one
@@ -787,7 +791,7 @@ public class Voronoi {
 				bisector = createHalfEdge(edge, RIGHT_EDGE);
 				// insert the new HE to the right of the original bisector
 				// earlier in the IF stmt
-				insertHalfEdgeToRightOf(lbnd, bisector);
+				insertHalfEdgeToLeftOf(lbnd, bisector);
 
 				// if this new bisector intersects with the new HalfEdge
 				if ((p = findWhereEdgesIntersect(bisector, rbnd)) != null) {
@@ -852,7 +856,7 @@ public class Voronoi {
 				// create a HE from the Edge 'e',
 				// and make it point to that edge
 				// with its edgeListEdge field
-				insertHalfEdgeToRightOf(llbnd, bisector);
+				insertHalfEdgeToLeftOf(llbnd, bisector);
 				// insert the new bisector to the
 				// right of the left HE
 				setEndpoint(edge, RIGHT_EDGE - pm, v);

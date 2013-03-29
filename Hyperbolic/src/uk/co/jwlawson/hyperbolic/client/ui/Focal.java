@@ -15,35 +15,29 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.RepeatingCommand;
-import com.google.gwt.dom.client.Touch;
-import com.google.gwt.event.dom.client.GestureStartEvent;
-import com.google.gwt.event.dom.client.GestureStartHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.TouchEndEvent;
-import com.google.gwt.event.dom.client.TouchEndHandler;
-import com.google.gwt.event.dom.client.TouchMoveEvent;
-import com.google.gwt.event.dom.client.TouchMoveHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
+import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclPoint;
 import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
 import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
+import com.google.gwt.event.dom.client.GestureStartEvent;
+import com.google.gwt.event.dom.client.GestureStartHandler;
+import com.google.gwt.event.dom.client.MouseWheelEvent;
+import com.google.gwt.event.dom.client.MouseWheelHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author John
@@ -61,7 +55,8 @@ public class Focal implements CanvasHolder {
 	private List<Line> mLineList;
 
 	// mouse positions relative to canvas
-	private int mouseX, mouseY;
+	private double mouseX, mouseY;
+	private double scale = 1;
 
 	// canvas size, in px
 	private int height = 400;
@@ -122,12 +117,7 @@ public class Focal implements CanvasHolder {
 				next.scale(width / 2);
 				mPointList.add(next);
 
-				context.save();
-				context.translate(width, height);
-				context.scale(2.0, -2.0);
-				next.draw(context);
-				line.draw(context);
-				context.restore();
+				drawDrawables(next, line);
 
 				if (!orbit.hasNext()) {
 					computeFinished();
@@ -144,6 +134,16 @@ public class Focal implements CanvasHolder {
 
 		log.fine("Points loaded");
 
+	}
+
+	private void drawDrawables(Drawable... drawables) {
+		context.save();
+		context.translate(width, height);
+		context.scale(2.0, -2.0);
+		for (Drawable draw : drawables) {
+			draw.draw(context);
+		}
+		context.restore();
 	}
 
 	public void initSize() {
@@ -182,6 +182,7 @@ public class Focal implements CanvasHolder {
 		for (Point point : mPointList) {
 			point.draw(context);
 		}
+
 		context.restore();
 		System.out.println("Update done");
 
@@ -192,43 +193,31 @@ public class Focal implements CanvasHolder {
 		context.fillRect(0, 0, 2 * width, 2 * height);
 	}
 
+	private void scale(double mX, double mY, double zoom) {
+		context.translate(2 * mouseX, 2 * mouseY);
+		context.scale(zoom, zoom);
+		context.translate(-2 * (mX / scale + mouseX - mX / (scale * zoom)), -2
+				* (mY / scale + mouseY - mY / (scale * zoom)));
+
+		mouseX = (mX / scale + mouseX - mX / (scale * zoom));
+		mouseY = (mY / scale + mouseY - mY / (scale * zoom));
+		scale *= zoom;
+
+		doUpdate();
+	}
+
 	@Override
 	public void initHandlers() {
-		canvas.addMouseMoveHandler(new MouseMoveHandler() {
-			@Override
-			public void onMouseMove(MouseMoveEvent event) {
-				mouseX = event.getRelativeX(canvas.getElement());
-				mouseY = event.getRelativeY(canvas.getElement());
-			}
-		});
 
-		canvas.addMouseOutHandler(new MouseOutHandler() {
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				mouseX = -200;
-				mouseY = -200;
-			}
-		});
+		canvas.addMouseWheelHandler(new MouseWheelHandler() {
 
-		canvas.addTouchMoveHandler(new TouchMoveHandler() {
 			@Override
-			public void onTouchMove(TouchMoveEvent event) {
-				event.preventDefault();
-				if (event.getTouches().length() > 0) {
-					Touch touch = event.getTouches().get(0);
-					mouseX = touch.getRelativeX(canvas.getElement());
-					mouseY = touch.getRelativeY(canvas.getElement());
-				}
-				event.preventDefault();
-			}
-		});
-
-		canvas.addTouchEndHandler(new TouchEndHandler() {
-			@Override
-			public void onTouchEnd(TouchEndEvent event) {
-				event.preventDefault();
-				mouseX = -200;
-				mouseY = -200;
+			public void onMouseWheel(MouseWheelEvent event) {
+				double mX = event.getRelativeX(canvas.getElement());
+				double mY = event.getRelativeY(canvas.getElement());
+				float wheel = (float) -event.getDeltaY() / 30;
+				double zoom = Math.pow(1 + Math.abs(wheel) / 2, wheel > 0 ? 1 : -1);
+				scale(mX, mY, zoom);
 			}
 		});
 
