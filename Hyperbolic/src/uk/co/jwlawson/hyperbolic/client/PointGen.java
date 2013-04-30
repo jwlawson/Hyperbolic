@@ -100,10 +100,11 @@ public abstract class PointGen {
 			}
 
 		});
-		log.fine("Points loaded");
+
 	}
 
 	private void computeFinished() {
+		log.info("Points loaded");
 		for (PointHandler handler : mHandlers) {
 			handler.pointsAdded();
 		}

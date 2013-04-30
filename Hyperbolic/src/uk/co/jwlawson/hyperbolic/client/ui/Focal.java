@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
@@ -46,6 +45,8 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 
 	private List<Point> mPointList;
 	private List<Line> mLineList;
+	private Line[] mLineArr;
+	private Point[] mPointArr;
 
 	// These really DO get used. Don't delete.
 	@SuppressWarnings("unused")
@@ -58,6 +59,9 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 	public Focal() {
 		mLineList = new ArrayList<Line>();
 		mPointList = new ArrayList<Point>();
+
+		mLineArr = new Line[0];
+		mPointArr = new Point[0];
 	}
 
 	public void setLineFactory(LineFactory factory) {
@@ -93,6 +97,10 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 	@Override
 	public void pointsAdded() {
 		log.fine("Compute done!");
+
+		mLineArr = new Line[mLineList.size()];
+		mPointArr = new Point[mPointList.size()];
+
 		doUpdate();
 	}
 
@@ -101,8 +109,8 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 
 		clearCanvas();
 
-		drawDrawables((Drawable[]) mLineList.toArray());
-		drawDrawables((Drawable[]) mPointList.toArray());
+		drawDrawables(mLineList.toArray(mLineArr));
+		drawDrawables(mPointList.toArray(mPointArr));
 
 	}
 

@@ -58,6 +58,8 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 
 	private TorusPointGen pointGen = new TorusPointGen();
 
+	private SizeChangeTimer sizeTimer = new SizeChangeTimer();
+
 	@Override
 	public void onModuleLoad() {
 
@@ -155,10 +157,33 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 
 	@Override
 	public void sizeChanged(float width, float height) {
-		mFocal.setLineFactory(new EuclLineFactory((int) width, (int) height));
 		pointGen.stop();
-		pointGen.setHeight(height);
-		pointGen.setWidth(width);
-		pointGen.start();
+		sizeTimer.setHeight(height);
+		sizeTimer.setWidth(width);
+		sizeTimer.schedule(20);
 	}
+
+	/** Used to delay recalculations after the size is changed, so that it only happens once no matter how many listeners there are. */
+	private class SizeChangeTimer extends Timer {
+
+		private float width, height;
+
+		public void setHeight(float height) {
+			this.height = height;
+		}
+
+		public void setWidth(float width) {
+			this.width = width;
+		}
+
+		@Override
+		public void run() {
+			mFocal.setLineFactory(new EuclLineFactory((int) width, (int) height));
+
+			pointGen.setHeight(height);
+			pointGen.setWidth(width);
+			pointGen.start();
+		}
+
+	};
 }

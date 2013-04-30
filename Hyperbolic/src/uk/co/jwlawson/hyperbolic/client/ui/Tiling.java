@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
@@ -29,16 +28,21 @@ import uk.co.jwlawson.hyperbolic.client.geometry.Point;
  */
 public class Tiling extends SquareCanvasHolder implements PointHandler {
 
-	private static final Logger log = Logger.getLogger(Tiling.class.getSimpleName());
+	private static final Logger log = Logger.getLogger(Tiling.class.getName());
 
 	private ArrayList<Line> mLineList;
+	private Line[] mLineArr;
 	private ArrayList<Point> mPointList;
+	private Point[] mPointArr;
 	private LinkedList<Point> mScaledPointList;
 
 	public Tiling() {
 		mLineList = new ArrayList<Line>();
 		mPointList = new ArrayList<Point>();
 		mScaledPointList = new LinkedList<Point>();
+
+		mLineArr = new Line[0];
+		mPointArr = new Point[0];
 	}
 
 	@Override
@@ -46,8 +50,8 @@ public class Tiling extends SquareCanvasHolder implements PointHandler {
 
 		clearCanvas();
 
-		drawDrawables((Drawable[]) mLineList.toArray());
-		drawDrawables((Drawable[]) mPointList.toArray());
+		drawDrawables(mLineList.toArray(mLineArr));
+		drawDrawables(mPointList.toArray(mPointArr));
 	}
 
 	@Override
@@ -57,21 +61,29 @@ public class Tiling extends SquareCanvasHolder implements PointHandler {
 
 	@Override
 	public void addInitialPoint(Point p) {
-
-	}
-
-	@Override
-	public void addPoint(Point p) {
 		mPointList.add(p);
 		Point scaled = new Point(p);
 		scaled.scale(width / 2);
 		mScaledPointList.add(scaled);
 
-		drawDrawables(scaled);
+		drawDrawables(p);
+	}
+
+	@Override
+	public void addPoint(Point p) {
+		log.finest("Point added: " + p);
+		mPointList.add(p);
+		Point scaled = new Point(p);
+		scaled.scale(width / 2);
+		mScaledPointList.add(scaled);
+
+		drawDrawables(p);
 	}
 
 	@Override
 	public void pointsAdded() {
+		mLineArr = new Line[mLineList.size()];
+		mPointArr = new Point[mPointList.size()];
 		// TODO Compute tiling
 	}
 

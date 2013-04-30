@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class SquareCanvasHolder implements CanvasHolder {
 
-	private static final Logger log = Logger.getLogger(SquareCanvasHolder.class.getSimpleName());
+	private static final Logger log = Logger.getLogger(SquareCanvasHolder.class.getName());
 	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
 
 	protected Canvas canvas;
