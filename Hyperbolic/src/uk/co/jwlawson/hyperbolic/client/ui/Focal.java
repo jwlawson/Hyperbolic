@@ -24,9 +24,6 @@ import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.dom.client.Touch;
 import com.google.gwt.event.dom.client.GestureStartEvent;
 import com.google.gwt.event.dom.client.GestureStartHandler;
@@ -38,54 +35,29 @@ import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author John
  * 
  */
-public class Focal implements CanvasHolder, PointHandler {
+public class Focal extends SquareCanvasHolder implements PointHandler {
 
 	private static final Logger log = Logger.getLogger(Focal.class.getName());
-
-	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
-
-	private Canvas canvas;
 
 	private List<Point> mPointList;
 	private List<Line> mLineList;
 
-	// mouse positions relative to canvas
+	// These really DO get used. Don't delete.
+	@SuppressWarnings("unused")
 	private int mouseX, mouseY;
-
-	// canvas size, in px
-	private int height = 400;
-	private int width = 400;
-
-	private CssColor redrawColor = CssColor.make("rgb(255,255,255)");
-	private Context2d context;
 
 	private Point mOrigin;
 
 	private LineFactory mFactory;
 
-	private SizeChangeListener sizeListener;
-
 	public Focal() {
-		canvas = Canvas.createIfSupported();
-		if (canvas == null) {
-			Window.alert(upgradeMessage);
-			return;
-		}
-		context = canvas.getContext2d();
 		mLineList = new ArrayList<Line>();
 		mPointList = new ArrayList<Point>();
-	}
-
-	public void setSizeListener(SizeChangeListener listener) {
-		this.sizeListener = listener;
 	}
 
 	public void setLineFactory(LineFactory factory) {
@@ -109,7 +81,7 @@ public class Focal implements CanvasHolder, PointHandler {
 	@Override
 	public void addPoint(Point next) {
 		next.scale(width / 8.5);
-		System.out.println(mOrigin + " " + next);
+		log.finer(mOrigin + " " + next);
 		Line line = mFactory.getPerpendicularBisector(mOrigin, next);
 		mLineList.add(line);
 		// next.scale(width / 2);
@@ -120,32 +92,7 @@ public class Focal implements CanvasHolder, PointHandler {
 
 	@Override
 	public void pointsAdded() {
-		System.out.println("Compute done!");
-		doUpdate();
-	}
-
-	private void drawDrawables(Drawable... list) {
-		context.save();
-		context.translate(width, height);
-		context.scale(2.0, -2.0);
-		for (Drawable d : list) {
-			d.draw(context);
-		}
-		context.restore();
-	}
-
-	public void initSize() {
-		Widget panel = canvas.getParent();
-		width = panel.getOffsetWidth();
-		height = width;
-
-		canvas.setWidth(width + "px");
-		canvas.setHeight(height + "px");
-		canvas.setCoordinateSpaceWidth(2 * width);
-		canvas.setCoordinateSpaceHeight(2 * height);
-
-		sizeListener.sizeChanged(width, height);
-
+		log.fine("Compute done!");
 		doUpdate();
 	}
 
@@ -154,35 +101,9 @@ public class Focal implements CanvasHolder, PointHandler {
 
 		clearCanvas();
 
-		context.save();
-		context.translate(width, height);
-		context.scale(2.0, -2.0);
+		drawDrawables((Drawable[]) mLineList.toArray());
+		drawDrawables((Drawable[]) mPointList.toArray());
 
-//		drawBoundingCircle();
-
-		for (Line line : mLineList) {
-			line.draw(context);
-		}
-		for (Point point : mPointList) {
-			point.draw(context);
-		}
-		context.restore();
-		System.out.println("Update done");
-
-	}
-
-	private void drawBoundingCircle() {
-		context.beginPath();
-		context.arc(0, 0, width / 2, 0, 2 * Math.PI);
-		context.closePath();
-		context.setStrokeStyle("#000000");
-		context.setLineWidth(0.5);
-		context.stroke();
-	}
-
-	private void clearCanvas() {
-		context.setFillStyle(redrawColor);
-		context.fillRect(0, 0, 2 * width, 2 * height);
 	}
 
 	@Override
@@ -231,13 +152,6 @@ public class Focal implements CanvasHolder, PointHandler {
 				event.preventDefault();
 			}
 		});
-	}
-
-	@Override
-	public void addToPanel(Panel panel) {
-		panel.add(canvas);
-
-		initSize();
 	}
 
 }

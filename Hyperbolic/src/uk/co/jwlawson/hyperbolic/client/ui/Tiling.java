@@ -15,219 +15,39 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.RepeatingCommand;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import uk.co.jwlawson.hyperbolic.client.framework.Drawable;
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.logging.Logger;
 
 /**
  * @author John
  * 
  */
-public class Tiling implements CanvasHolder {
+public class Tiling extends SquareCanvasHolder implements PointHandler {
 
-	private static final String upgradeMessage = "Your browser does not support the HTML5 Canvas. Please upgrade your browser to view this demo.";
+	private static final Logger log = Logger.getLogger(Tiling.class.getSimpleName());
 
-	private static final Logger log = Logger.getLogger("Tiling");
-	private ArrayList<Line> mLineList = new ArrayList<Line>();
-	private ArrayList<Point> mPointList = new ArrayList<Point>();
-	private LinkedList<Point> mScaledPointList = new LinkedList<Point>();
-
-	private Canvas canvas;
-	private Context2d context;
-
-	// canvas size, in px
-	private int height = 400;
-	private int width = 400;
-	private final CssColor redrawColor = CssColor.make("rgb(255,255,255)");
-
-	private double t = -1;
+	private ArrayList<Line> mLineList;
+	private ArrayList<Point> mPointList;
+	private LinkedList<Point> mScaledPointList;
 
 	public Tiling() {
 		mLineList = new ArrayList<Line>();
-
-		canvas = Canvas.createIfSupported();
-		if (canvas == null) {
-			Window.alert(upgradeMessage);
-			return;
-		}
-
-		context = canvas.getContext2d();
-	}
-
-	public void setT(double t) {
-		this.t = t;
-
-		initPoints();
-	}
-
-	private void initPoints() {
-		mPointList.clear();
-		mLineList.clear();
-
-		final IdealTorusOrbit orbit = new IdealTorusOrbit(t);
-
-		log.info("Iterating over points");
-		Scheduler.get().scheduleIncremental(new RepeatingCommand() {
-			@Override
-			public boolean execute() {
-				Point next = orbit.next();
-
-				mPointList.add(next);
-				Point scaled = new Point(next);
-				scaled.scale(width / 2);
-				mScaledPointList.add(scaled);
-
-				drawDrawables(scaled);
-
-				if (!orbit.hasNext()) {
-//					pointsComputed();
-				}
-
-				return orbit.hasNext();
-			}
-		});
-	}
-
-	private void drawDrawables(Drawable... drawables) {
-		context.save();
-		context.translate(width, height);
-		context.scale(2.0, -2.0);
-		for (Drawable draw : drawables) {
-			draw.draw(context);
-		}
-		context.restore();
-	}
-
-	private void pointsComputed() {
-//		final LineFactory factory = new EuclLineFactory(width, height);
-////		final LineFactory factory = new HypLineFactory(width / 2);
-//		// Voronoi vor = new Voronoi(0.0001);
-//
-//		double[] xValues = getXValues();
-//		double[] yValues = getYValues();
-//
-//		// List<GraphEdge> list = vor.generateVoronoi(xValues, yValues, -1, 1,
-//// -1, 1);
-//
-//		// final Iterator<GraphEdge> iter = list.iterator();
-//
-////		Voronoi voronoi = new Voronoi();
-////		voronoi.setSites(getSites());
-////		List<Bisector> list = voronoi.getEdges();
-//
-////		final Iterator<Bisector> iter = list.iterator();
-//
-//		Scheduler.get().scheduleIncremental(new RepeatingCommand() {
-//
-//			@Override
-//			public boolean execute() {
-//
-////				GraphEdgeAdapter edge = new GraphEdgeAdapter(iter.next());
-//				BisectorAdapter edge = new BisectorAdapter(iter.next());
-//				HypPoint start = new HypPoint(edge.getStart());
-//				HypPoint end = new HypPoint(edge.getEnd());
-//				// start.scale(width / 2);
-//				// end.scale(width / 2);
-//				Line line = factory.getSegmentJoining(start, end);
-//				mLineList.add(line);
-//				// System.out.println("Added voronoi line " + line + " from " +
-//				// start + " to " + end);
-//
-//				drawDrawables(line);
-//
-//				if (!iter.hasNext()) {
-//					linesComputed();
-//				}
-//
-//				return iter.hasNext();
-//			}
-//		});
-
-	}
-
-	protected void linesComputed() {
-		doUpdate();
-	}
-
-	private double[] getYValues() {
-		double[] arr = new double[mPointList.size()];
-		for (int i = 0; i < mPointList.size(); i++) {
-			arr[i] = mPointList.get(i).getY();
-		}
-		return arr;
-	}
-
-	private double[] getXValues() {
-		double[] arr = new double[mPointList.size()];
-		for (int i = 0; i < mPointList.size(); i++) {
-			arr[i] = mPointList.get(i).getX();
-		}
-		return arr;
-	}
-
-//	private List<Site> getSites() {
-//		List<Site> result = new ArrayList<Site>();
-//		for (Point p : mPointList) {
-//			result.add(getSite(p));
-//		}
-//		return result;
-//	}
-//
-//	private Site getSite(Point p) {
-//		return new Site(p.getX(), p.getY());
-//	}
-
-	public void initSize() {
-		Widget panel = canvas.getParent();
-		width = panel.getOffsetWidth();
-		height = width;
-
-		canvas.setWidth(width + "px");
-		canvas.setHeight(height + "px");
-		canvas.setCoordinateSpaceWidth(2 * width);
-		canvas.setCoordinateSpaceHeight(2 * height);
-
-		initPoints();
+		mPointList = new ArrayList<Point>();
+		mScaledPointList = new LinkedList<Point>();
 	}
 
 	@Override
 	public void doUpdate() {
 
-		context.setFillStyle(redrawColor);
-		context.fillRect(-width, -height, width, height);
+		clearCanvas();
 
-		context.save();
-		context.translate(width, height);
-		context.scale(2.0, -2.0);
-
-		context.beginPath();
-		context.arc(0, 0, width / 2, 0, 2 * Math.PI);
-		context.closePath();
-		context.setStrokeStyle("#000000");
-		context.setLineWidth(0.5);
-		context.stroke();
-
-		for (Line line : mLineList) {
-			line.draw(context);
-		}
-		for (Point point : mScaledPointList) {
-			point.draw(context);
-		}
-		context.restore();
+		drawDrawables((Drawable[]) mLineList.toArray());
+		drawDrawables((Drawable[]) mPointList.toArray());
 	}
 
 	@Override
@@ -236,11 +56,29 @@ public class Tiling implements CanvasHolder {
 	}
 
 	@Override
-	public void addToPanel(Panel panel) {
-		panel.add(canvas);
+	public void addInitialPoint(Point p) {
 
-		initSize();
-		doUpdate();
+	}
+
+	@Override
+	public void addPoint(Point p) {
+		mPointList.add(p);
+		Point scaled = new Point(p);
+		scaled.scale(width / 2);
+		mScaledPointList.add(scaled);
+
+		drawDrawables(scaled);
+	}
+
+	@Override
+	public void pointsAdded() {
+		// TODO Compute tiling
+	}
+
+	@Override
+	public void clear() {
+		mPointList.clear();
+		mLineList.clear();
 	}
 
 }

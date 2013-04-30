@@ -80,10 +80,12 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 		mTiling = new Tiling();
 		mFocal = new Focal();
 		mFocal.setSizeListener(this);
+		mTiling.setSizeListener(this);
 
 		pointGen.addPointHandler(mFocal);
+		pointGen.addPointHandler(mTiling);
 
-//		mTiling.addToPanel(RootPanel.get(TILING_MOUNT_ID));
+		mTiling.addToPanel(RootPanel.get(TILING_MOUNT_ID));
 		mFocal.addToPanel(RootPanel.get(FOCAL_MOUNT_ID));
 
 		Window.addResizeHandler(new ResizeHandler() {
@@ -104,7 +106,7 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 	}
 
 	private void doLayoutCalculations() {
-		// mTiling.initSize();
+		mTiling.initSize();
 		mFocal.initSize();
 	}
 

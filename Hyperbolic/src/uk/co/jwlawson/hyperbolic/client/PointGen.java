@@ -57,9 +57,8 @@ public abstract class PointGen {
 	}
 
 	protected void setInitialPoint(Point initial) {
-		System.out.println("Point set " + initial);
+		log.fine("Point set " + initial);
 		mOrigin = initial;
-		System.out.println("Point set " + mOrigin);
 	}
 
 	protected void setOrbitIter(OrbitIter iter) {
