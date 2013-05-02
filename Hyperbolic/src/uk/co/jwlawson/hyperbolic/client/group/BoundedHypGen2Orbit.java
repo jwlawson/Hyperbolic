@@ -32,7 +32,7 @@ public class BoundedHypGen2Orbit extends Gen2OrbitPoints {
 	@Override
 	protected boolean calculateMore(Point p) {
 		HypPoint hp = new HypPoint(p);
-		return super.calculateMore(p) && (hp.euclMag() < 0.999);
+		return super.calculateMore(p) && (hp.euclMag() < 0.997);
 	}
 
 }

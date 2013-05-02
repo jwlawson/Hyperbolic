@@ -15,18 +15,6 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
-import com.google.gwt.dom.client.Touch;
-import com.google.gwt.event.dom.client.GestureStartEvent;
-import com.google.gwt.event.dom.client.GestureStartHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.TouchEndEvent;
-import com.google.gwt.event.dom.client.TouchEndHandler;
-import com.google.gwt.event.dom.client.TouchMoveEvent;
-import com.google.gwt.event.dom.client.TouchMoveHandler;
-
 import uk.co.jwlawson.hyperbolic.client.geometry.Line;
 import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
@@ -47,10 +35,6 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 	private List<Line> mLineList;
 	private Line[] mLineArr;
 	private Point[] mPointArr;
-
-	// These really DO get used. Don't delete.
-	@SuppressWarnings("unused")
-	private int mouseX, mouseY;
 
 	private Point mOrigin;
 
@@ -79,7 +63,9 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 
 	@Override
 	public void addInitialPoint(Point p) {
-		mOrigin = p;
+		mOrigin = new Point(p);
+		log.info("Start: " + mOrigin);
+		p.scale(width / 2);
 		mPointList.add(p);
 		drawDrawables(p);
 	}
@@ -89,6 +75,7 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 //		next.scale(width / 8.5);
 		log.finer(mOrigin + " " + next);
 		Line line = mFactory.getPerpendicularBisector(mOrigin, next);
+		System.out.println(line);
 		mLineList.add(line);
 		next.scale(width / 2);
 		mPointList.add(next);
@@ -118,50 +105,7 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 
 	@Override
 	public void initHandlers() {
-		canvas.addMouseMoveHandler(new MouseMoveHandler() {
-			@Override
-			public void onMouseMove(MouseMoveEvent event) {
-				mouseX = event.getRelativeX(canvas.getElement());
-				mouseY = event.getRelativeY(canvas.getElement());
-			}
-		});
 
-		canvas.addMouseOutHandler(new MouseOutHandler() {
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				mouseX = -200;
-				mouseY = -200;
-			}
-		});
-
-		canvas.addTouchMoveHandler(new TouchMoveHandler() {
-			@Override
-			public void onTouchMove(TouchMoveEvent event) {
-				event.preventDefault();
-				if (event.getTouches().length() > 0) {
-					Touch touch = event.getTouches().get(0);
-					mouseX = touch.getRelativeX(canvas.getElement());
-					mouseY = touch.getRelativeY(canvas.getElement());
-				}
-				event.preventDefault();
-			}
-		});
-
-		canvas.addTouchEndHandler(new TouchEndHandler() {
-			@Override
-			public void onTouchEnd(TouchEndEvent event) {
-				event.preventDefault();
-				mouseX = -200;
-				mouseY = -200;
-			}
-		});
-
-		canvas.addGestureStartHandler(new GestureStartHandler() {
-			@Override
-			public void onGestureStart(GestureStartEvent event) {
-				event.preventDefault();
-			}
-		});
 	}
 
 }

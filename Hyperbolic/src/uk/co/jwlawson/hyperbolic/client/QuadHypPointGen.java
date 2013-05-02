@@ -32,7 +32,7 @@ public class QuadHypPointGen extends PointGen {
 
 	@Override
 	public void start() {
-		setInitialPoint(new Point(0, 0));
+		setInitialPoint(new Point((y - 1) / (y + 1), 0));
 		setOrbitIter(new IdealTorusOrbit(y));
 		super.start();
 	}
