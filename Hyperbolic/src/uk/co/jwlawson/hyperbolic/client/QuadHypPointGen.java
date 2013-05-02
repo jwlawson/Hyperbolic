@@ -13,26 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.jwlawson.hyperbolic.client.group;
+package uk.co.jwlawson.hyperbolic.client;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypPoint;
-import uk.co.jwlawson.hyperbolic.client.geometry.isometries.Isom;
+import uk.co.jwlawson.hyperbolic.client.group.IdealTorusOrbit;
 
 /**
  * @author John
  * 
  */
-public class BoundedHypGen2Orbit extends Gen2OrbitPoints {
+public class QuadHypPointGen extends PointGen {
 
-	public BoundedHypGen2Orbit(Isom A, Isom B) {
-		super(A, B);
+	private double y = 1;
+
+	public void setY(double y) {
+		this.y = y;
 	}
 
 	@Override
-	protected boolean calculateMore(Point p) {
-		HypPoint hp = new HypPoint(p);
-		return super.calculateMore(p) && (hp.euclMag() < 0.999);
+	public void start() {
+		setInitialPoint(new Point(0, 0));
+		setOrbitIter(new IdealTorusOrbit(y));
+		super.start();
 	}
 
 }

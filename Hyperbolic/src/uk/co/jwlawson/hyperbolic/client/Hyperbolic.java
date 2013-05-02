@@ -15,16 +15,6 @@
  */
 package uk.co.jwlawson.hyperbolic.client;
 
-import java.util.logging.Logger;
-
-import uk.co.jwlawson.hyperbolic.client.geometry.euclidean.EuclLineFactory;
-import uk.co.jwlawson.hyperbolic.client.ui.Focal;
-import uk.co.jwlawson.hyperbolic.client.ui.SizeChangeListener;
-import uk.co.jwlawson.hyperbolic.client.ui.Tiling;
-import uk.co.jwlawson.hyperbolic.client.widget.Slider;
-import uk.co.jwlawson.hyperbolic.client.widget.SliderEvent;
-import uk.co.jwlawson.hyperbolic.client.widget.SliderListener;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
@@ -32,6 +22,16 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+
+import uk.co.jwlawson.hyperbolic.client.geometry.hyperbolic.HypLineFactory;
+import uk.co.jwlawson.hyperbolic.client.ui.Focal;
+import uk.co.jwlawson.hyperbolic.client.ui.SizeChangeListener;
+import uk.co.jwlawson.hyperbolic.client.ui.Tiling;
+import uk.co.jwlawson.hyperbolic.client.widget.Slider;
+import uk.co.jwlawson.hyperbolic.client.widget.SliderEvent;
+import uk.co.jwlawson.hyperbolic.client.widget.SliderListener;
+
+import java.util.logging.Logger;
 
 /**
  * @author John Lawson
@@ -56,7 +56,7 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 	private Slider xSlider;
 	private Label xValue;
 
-	private TorusPointGen pointGen = new TorusPointGen();
+	private QuadHypPointGen pointGen = new QuadHypPointGen();
 
 	private SizeChangeTimer sizeTimer = new SizeChangeTimer();
 
@@ -68,16 +68,16 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 		ySlider = new Slider("x", 1, 500, 100);
 		ySlider.addListener(this);
 
-		xValue = new Label(X_LABEL + "1");
-		xValue.addStyleName(SLIDER_VALUE_STYLE);
-		xSlider = new Slider("y", 1, 500, 100);
-		xSlider.addListener(this);
+//		xValue = new Label(X_LABEL + "1");
+//		xValue.addStyleName(SLIDER_VALUE_STYLE);
+//		xSlider = new Slider("y", 1, 500, 100);
+//		xSlider.addListener(this);
 
 		RootPanel.get(SLIDER_ID).add(yValue);
 		RootPanel.get(SLIDER_ID).add(ySlider);
 
-		RootPanel.get(SLIDER_ID).add(xValue);
-		RootPanel.get(SLIDER_ID).add(xSlider);
+//		RootPanel.get(SLIDER_ID).add(xValue);
+//		RootPanel.get(SLIDER_ID).add(xSlider);
 
 		mTiling = new Tiling();
 		mFocal = new Focal();
@@ -127,11 +127,11 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 			reloadTimer.schedule(500);
 			return true;
 		}
-		if (xSlider == source) {
-			xValue.setText(X_LABEL + (double) e.getValues()[0] / 100);
-			reloadTimer.schedule(500);
-			return true;
-		}
+//		if (xSlider == source) {
+//			xValue.setText(X_LABEL + (double) e.getValues()[0] / 100);
+//			reloadTimer.schedule(500);
+//			return true;
+//		}
 		return false;
 	}
 
@@ -139,7 +139,7 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 
 		@Override
 		public void run() {
-			pointGen.setX((double) xSlider.getValueAtIndex(0) / 100);
+//			pointGen.setX((double) xSlider.getValueAtIndex(0) / 100);
 			pointGen.setY((double) ySlider.getValueAtIndex(0) / 100);
 			pointGen.start();
 		}
@@ -163,7 +163,10 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 		sizeTimer.schedule(20);
 	}
 
-	/** Used to delay recalculations after the size is changed, so that it only happens once no matter how many listeners there are. */
+	/**
+	 * Used to delay recalculations after the size is changed, so that it only
+	 * happens once no matter how many listeners there are.
+	 */
 	private class SizeChangeTimer extends Timer {
 
 		private float width, height;
@@ -178,10 +181,10 @@ public class Hyperbolic implements EntryPoint, SliderListener, SizeChangeListene
 
 		@Override
 		public void run() {
-			mFocal.setLineFactory(new EuclLineFactory((int) width, (int) height));
+			mFocal.setLineFactory(new HypLineFactory(width / 2));
 
-			pointGen.setHeight(height);
-			pointGen.setWidth(width);
+//			pointGen.setHeight(height);
+//			pointGen.setWidth(width);
 			pointGen.start();
 		}
 

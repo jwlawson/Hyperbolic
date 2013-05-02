@@ -26,7 +26,6 @@ public class IdealTorusOrbit extends BoundedHypGen2Orbit {
 
 	public IdealTorusOrbit(double y) {
 		super(getIsomA(y), getIsomB(y));
-		System.out.println("Torus iter created");
 	}
 
 	private static IsomD getIsomA(double y) {

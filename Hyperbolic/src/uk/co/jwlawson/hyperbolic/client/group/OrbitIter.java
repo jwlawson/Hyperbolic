@@ -40,8 +40,9 @@ public abstract class OrbitIter implements Iterator<Point> {
 	private OrbitPoint current, next;
 
 	private boolean calcMore = true;
+	private boolean hasNext = true;
 
-	private double max = 1000;
+	private double max = 5000;
 
 	public OrbitIter() {
 		masterList = new LinkedList<OrbitPoint>();
@@ -68,7 +69,11 @@ public abstract class OrbitIter implements Iterator<Point> {
 
 	@Override
 	public boolean hasNext() {
-		return count < max;
+		return hasNext && count < max;
+	}
+
+	protected boolean calculateMore(Point p) {
+		return calcMore;
 	}
 
 	@Override
@@ -76,7 +81,7 @@ public abstract class OrbitIter implements Iterator<Point> {
 
 		current = new OrbitPoint(next);
 
-		if (calcMore) {
+		if (calculateMore(current)) {
 			addPoints(calculateNextLevel(current));
 		}
 		if (currentIter.hasNext()) {
@@ -87,7 +92,12 @@ public abstract class OrbitIter implements Iterator<Point> {
 			currentList = new LinkedList<OrbitPoint>(nextList);
 			currentIter = currentList.iterator();
 			nextList.clear();
-			next = currentIter.next();
+			if (currentIter.hasNext()) {
+				next = currentIter.next();
+			} else {
+				System.out.println("Total points: " + count);
+				hasNext = false;
+			}
 		}
 
 		count++;

@@ -15,16 +15,16 @@
  */
 package uk.co.jwlawson.hyperbolic.client;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 
 import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 import uk.co.jwlawson.hyperbolic.client.group.OrbitIter;
 import uk.co.jwlawson.hyperbolic.client.ui.PointHandler;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.RepeatingCommand;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Administrator
@@ -53,6 +53,7 @@ public abstract class PointGen {
 	}
 
 	public void start() {
+		System.out.println(mOrigin);
 		initPoints();
 	}
 

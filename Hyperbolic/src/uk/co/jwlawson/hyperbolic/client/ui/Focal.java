@@ -15,14 +15,6 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
-import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
-import uk.co.jwlawson.hyperbolic.client.geometry.Point;
-
 import com.google.gwt.dom.client.Touch;
 import com.google.gwt.event.dom.client.GestureStartEvent;
 import com.google.gwt.event.dom.client.GestureStartHandler;
@@ -34,6 +26,14 @@ import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
+
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.geometry.LineFactory;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author John
@@ -72,6 +72,8 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 	public void clear() {
 		mLineList.clear();
 		mPointList.clear();
+		mLineArr = new Line[0];
+		mPointArr = new Point[0];
 		doUpdate();
 	}
 
@@ -84,11 +86,11 @@ public class Focal extends SquareCanvasHolder implements PointHandler {
 
 	@Override
 	public void addPoint(Point next) {
-		next.scale(width / 8.5);
+//		next.scale(width / 8.5);
 		log.finer(mOrigin + " " + next);
 		Line line = mFactory.getPerpendicularBisector(mOrigin, next);
 		mLineList.add(line);
-		// next.scale(width / 2);
+		next.scale(width / 2);
 		mPointList.add(next);
 
 		drawDrawables(next, line);

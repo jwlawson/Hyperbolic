@@ -49,7 +49,7 @@ public class IsomD extends Isom {
 		double denY = (b.getX() * z.getY()) - (b.getY() * z.getX()) - a.getY();
 
 		Point result = complexDivide(numX, numY, denX, denY);
-		System.out.println("Mapping " + z + " to " + result);
+//		System.out.println("Mapping " + z + " to " + result);
 		return result;
 	}
 

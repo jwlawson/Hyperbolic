@@ -15,12 +15,12 @@
  */
 package uk.co.jwlawson.hyperbolic.client.ui;
 
+import uk.co.jwlawson.hyperbolic.client.geometry.Line;
+import uk.co.jwlawson.hyperbolic.client.geometry.Point;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-
-import uk.co.jwlawson.hyperbolic.client.geometry.Line;
-import uk.co.jwlawson.hyperbolic.client.geometry.Point;
 
 /**
  * @author John
@@ -51,7 +51,7 @@ public class Tiling extends SquareCanvasHolder implements PointHandler {
 		clearCanvas();
 
 		drawDrawables(mLineList.toArray(mLineArr));
-		drawDrawables(mPointList.toArray(mPointArr));
+		drawDrawables(mScaledPointList.toArray(mPointArr));
 	}
 
 	@Override
@@ -83,14 +83,19 @@ public class Tiling extends SquareCanvasHolder implements PointHandler {
 	@Override
 	public void pointsAdded() {
 		mLineArr = new Line[mLineList.size()];
-		mPointArr = new Point[mPointList.size()];
+		mPointArr = new Point[mScaledPointList.size()];
 		// TODO Compute tiling
 	}
 
 	@Override
 	public void clear() {
 		mPointList.clear();
+		mScaledPointList.clear();
 		mLineList.clear();
+		mLineArr = new Line[0];
+		mPointArr = new Point[0];
+
+		doUpdate();
 	}
 
 }
